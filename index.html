@@ -10,69 +10,64 @@
 
 body{
     margin:0;
-    background:#f4f6f8;
+    background:#f5f7fa;
     color:#222;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    text-align:center;
+    font-family:sans-serif;
+    text-align:center
 }
 
 h2{
     margin:8px;
-    font-size:20px;
-    color:#222;
+    font-size:20px
 }
 
 #camera{
     width:100%;
     max-height:42vh;
     object-fit:contain;
-    background:#e5e7eb;
-    border-bottom:1px solid #ddd;
+    background:#ddd
 }
 
 #canvas{display:none}
 
 #status,#settings,#debugBox{
     width:94%;
-    margin:7px auto;
-    border-radius:10px;
+    margin:6px auto;
+    border-radius:10px
 }
 
 #status{
     padding:8px;
     background:white;
     border:1px solid #ddd;
-    box-shadow:0 1px 4px #0001;
     font-size:15px;
-    font-weight:bold;
+    font-weight:bold
 }
 
 #rate{
     font-size:12px;
-    color:#666;
-    margin:4px;
+    color:#777;
+    margin:3px
 }
 
 #settings{
     padding:9px;
     background:white;
     border:1px solid #ddd;
-    box-shadow:0 1px 4px #0001;
-    text-align:left;
+    text-align:left
 }
 
 #settings h3{
     margin:0 0 7px;
-    font-size:14px;
-    color:#333;
+    font-size:14px
 }
 
 .range-box{
-    background:#f8fafc;
-    border:1px solid #d9dee5;
+    background:#fafafa;
+    border:1px solid #ccc;
     border-radius:8px;
     padding:7px;
-    margin:6px 0;
+    margin:5px 0
 }
 
 .range-header{
@@ -80,38 +75,28 @@ h2{
     justify-content:space-between;
     align-items:center;
     margin-bottom:4px;
-    font-size:12px;
-    color:#333;
+    font-size:12px
 }
 
 .setting-row{
     display:grid;
     grid-template-columns:25px 1fr 1fr;
-    gap:5px;
-    margin:4px 0;
-    align-items:center;
+    gap:4px;
+    margin:3px 0;
+    align-items:center
 }
 
-.setting-row b{
-    font-size:12px;
-    color:#444;
-}
+.setting-row b{font-size:12px}
 
 .setting-row input{
     width:100%;
     height:28px;
     padding:4px;
     border-radius:5px;
-    border:1px solid #cbd1d8;
+    border:1px solid #bbb;
     background:white;
     color:#222;
-    font-size:13px;
-    outline:none;
-}
-
-.setting-row input:focus{
-    border-color:#2196f3;
-    box-shadow:0 0 0 2px #2196f322;
+    font-size:13px
 }
 
 button{
@@ -120,65 +105,58 @@ button{
     font-size:14px;
     padding:7px 13px;
     margin:2px;
-    cursor:pointer;
-}
-
-button:active{
-    transform:scale(.97);
+    cursor:pointer
 }
 
 #start,#addRange{
     background:#2196f3;
-    color:white;
+    color:white
 }
 
 #start:disabled{
-    background:#aab4c0;
+    background:#aaa
 }
 
 .delete-range{
-    background:#ef5350;
+    background:#e53935;
     color:white;
     font-size:11px;
-    padding:3px 7px;
+    padding:3px 7px
 }
 
 #clearDebug{
-    background:#e8edf2;
-    color:#333;
+    background:#777;
+    color:white
 }
 
 #copyDebug{
-    background:#dce3ea;
-    color:#333;
+    background:#555;
+    color:white
 }
 
 #addRange{
     width:100%;
-    margin-top:5px;
+    margin-top:5px
 }
 
 #photo{
     max-width:90%;
     max-height:180px;
     margin-top:5px;
-    border-radius:8px;
-    box-shadow:0 2px 8px #0002;
+    border-radius:7px
 }
 
 #debugBox{
-    padding:8px;
+    padding:7px;
     background:white;
-    border:1px solid #ddd;
-    box-shadow:0 1px 4px #0001;
-    text-align:left;
+    border:1px solid #ccc;
+    text-align:left
 }
 
 #debugTitle{
     font-weight:bold;
     font-size:13px;
-    margin-bottom:5px;
-    color:#333;
+    margin-bottom:4px
 }
 
 #debugLog{
@@ -187,24 +165,15 @@ button:active{
     white-space:pre-wrap;
     word-break:break-word;
     font:11px monospace;
-    line-height:1.3;
-    background:#f7f8fa;
-    border:1px solid #e1e4e8;
-    border-radius:6px;
-    padding:5px;
+    line-height:1.25
 }
 
-.log-info{color:#444}
+.log-info{color:#555}
 .log-success{color:#008f55}
-.log-warning{color:#a07800}
-.log-error{color:#d71920}
-.log-detected{color:#0088cc}
-.log-promise{color:#d71920}
-
-#start{
-    box-shadow:0 2px 5px #0002;
-}
-
+.log-warning{color:#c59a00}
+.log-error{color:#e00000;font-weight:bold}
+.log-detected{color:#0077bb}
+.log-promise{color:#e00000;font-weight:bold}
 </style>
 </head>
 
@@ -216,15 +185,12 @@ button:active{
 <canvas id="canvas"></canvas>
 
 <div id="status">開始ボタンを押してください</div>
-
 <div id="rate">検出率：0%</div>
 
 <div id="settings">
 
 <h3>
-RGB検出範囲:<br>
-Ascended (100,5,0)～(185,75,45)<br>
-Forbidden (30,55,94)～(75,145,185)
+RGB検出範囲
 </h3>
 
 <div id="ranges"></div>
@@ -234,34 +200,23 @@ Forbidden (30,55,94)～(75,145,185)
 </button>
 
 <div style="font-size:10px;color:#777;margin-top:4px">
-各範囲のどれか1つに一致すると検出します
+複数範囲に一致した場合はRGB中心値に最も近い範囲を採用します
 </div>
 
 </div>
 
-<button id="start">
-開始
-</button>
+<button id="start">開始</button>
 
 <img id="photo">
 
 <div id="debugBox">
 
-<div id="debugTitle">
-🛠 DEBUG LOG
-</div>
+<div id="debugTitle">🛠 DEBUG LOG</div>
 
-<div id="debugLog">
-起動しました
-</div>
+<div id="debugLog">起動しました</div>
 
-<button id="clearDebug">
-ログをクリア
-</button>
-
-<button id="copyDebug">
-ログをコピー
-</button>
+<button id="clearDebug">ログをクリア</button>
+<button id="copyDebug">ログをコピー</button>
 
 </div>
 
@@ -271,7 +226,7 @@ Forbidden (30,55,94)～(75,145,185)
 // 設定
 // ===============================
 
-const WEBHOOK="https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK";
+const WEBHOOK="ここにWebhook URL";
 
 const DETECTION_RATE=0.0005;
 
@@ -288,7 +243,9 @@ const $=id=>document.getElementById(id);
 
 const video=$("camera");
 const canvas=$("canvas");
-const ctx=canvas.getContext("2d",{willReadFrequently:true});
+const ctx=canvas.getContext("2d",{
+    willReadFrequently:true
+});
 
 const status=$("status");
 const rateText=$("rate");
@@ -304,10 +261,13 @@ const ranges=$("ranges");
 
 function debug(msg,type="INFO"){
 
+    const time=new Date().toLocaleTimeString();
+
+    const text=`[${time}] [${type}] ${msg}`;
+
     const div=document.createElement("div");
 
-    div.textContent=
-        `[${new Date().toLocaleTimeString()}] [${type}] ${msg}`;
+    div.textContent=text;
 
     div.className={
         ERROR:"log-error",
@@ -319,11 +279,11 @@ function debug(msg,type="INFO"){
 
     debugLog.appendChild(div);
 
-    debugLog.scrollTop=
-        debugLog.scrollHeight;
+    debugLog.scrollTop=debugLog.scrollHeight;
 
-    console.log(div.textContent);
+    console.log(text);
 }
+
 
 window.addEventListener("error",e=>
     debug(
@@ -332,17 +292,24 @@ window.addEventListener("error",e=>
     )
 );
 
+
 window.addEventListener("unhandledrejection",e=>
     debug(String(e.reason),"PROMISE ERROR")
 );
 
+
 $("clearDebug").onclick=()=>{
+
     debugLog.innerHTML="";
+
     debug("DEBUGログをクリアしました");
 };
 
+
 $("copyDebug").onclick=async()=>{
+
     try{
+
         await navigator.clipboard.writeText(
             debugLog.innerText
         );
@@ -367,6 +334,32 @@ $("copyDebug").onclick=async()=>{
 // ===============================
 
 let rangeCount=0;
+
+
+function rgbRow(name,min,max){
+
+    return `
+    <div class="setting-row">
+
+        <b>${name}</b>
+
+        <input
+            class="min${name}"
+            type="number"
+            min="0"
+            max="255"
+            value="${min}">
+
+        <input
+            class="max${name}"
+            type="number"
+            min="0"
+            max="255"
+            value="${max}">
+
+    </div>`;
+}
+
 
 function addRGBRange(v={}){
 
@@ -400,9 +393,11 @@ function addRGBRange(v={}){
         ${rgbRow("R",v.minR,v.maxR)}
         ${rgbRow("G",v.minG,v.maxG)}
         ${rgbRow("B",v.minB,v.maxB)}
+
     `;
 
     ranges.appendChild(box);
+
 
     box.querySelector(".delete-range").onclick=()=>{
 
@@ -427,29 +422,6 @@ function addRGBRange(v={}){
     };
 }
 
-function rgbRow(name,min,max){
-
-    return `
-    <div class="setting-row">
-
-        <b>${name}</b>
-
-        <input
-            class="min${name}"
-            type="number"
-            min="0"
-            max="255"
-            value="${min}">
-
-        <input
-            class="max${name}"
-            type="number"
-            min="0"
-            max="255"
-            value="${max}">
-
-    </div>`;
-}
 
 function renumber(){
 
@@ -460,6 +432,7 @@ function renumber(){
 
     });
 }
+
 
 function getRGB(){
 
@@ -476,6 +449,7 @@ function getRGB(){
 
     }));
 }
+
 
 function validateRGB(){
 
@@ -501,11 +475,9 @@ function validateRGB(){
             r.minB,r.maxB
         ];
 
-        if(
-            values.some(
-                v=>!Number.isFinite(v)||v<0||v>255
-            )
-        ){
+        if(values.some(
+            v=>!Number.isFinite(v)||v<0||v>255
+        )){
 
             debug(
                 `RGB範囲 ${i+1} に不正な値があります`,
@@ -533,6 +505,7 @@ function validateRGB(){
     return true;
 }
 
+
 $("addRange").onclick=()=>{
 
     addRGBRange();
@@ -545,6 +518,55 @@ $("addRange").onclick=()=>{
 
 
 // ===============================
+// 最も近いRGB範囲を取得
+// ===============================
+
+function getNearestRange(r,g,b,rs){
+
+    const candidates=[];
+
+    rs.forEach((v,index)=>{
+
+        if(
+            r>=v.minR&&r<=v.maxR&&
+            g>=v.minG&&g<=v.maxG&&
+            b>=v.minB&&b<=v.maxB
+        ){
+
+            const centerR=(v.minR+v.maxR)/2;
+            const centerG=(v.minG+v.maxG)/2;
+            const centerB=(v.minB+v.maxB)/2;
+
+            const distance=Math.sqrt(
+
+                Math.pow(r-centerR,2)+
+                Math.pow(g-centerG,2)+
+                Math.pow(b-centerB,2)
+
+            );
+
+            candidates.push({
+                index:index,
+                distance:distance
+            });
+        }
+    });
+
+
+    if(!candidates.length)
+        return -1;
+
+
+    candidates.sort(
+        (a,b)=>a.distance-b.distance
+    );
+
+
+    return candidates[0].index;
+}
+
+
+// ===============================
 // カメラ
 // ===============================
 
@@ -553,9 +575,11 @@ let detecting=false;
 let detected=false;
 let lastCapture=0;
 
+
 start.onclick=async()=>{
 
     debug("カメラ起動処理を開始");
+
 
     if(!validateRGB()){
 
@@ -564,6 +588,7 @@ start.onclick=async()=>{
 
         return;
     }
+
 
     if(stream){
 
@@ -574,6 +599,7 @@ start.onclick=async()=>{
 
         return;
     }
+
 
     if(!navigator.mediaDevices?.getUserMedia){
 
@@ -588,6 +614,7 @@ start.onclick=async()=>{
         return;
     }
 
+
     try{
 
         stream=
@@ -600,13 +627,15 @@ start.onclick=async()=>{
                 },
 
                 audio:false
-
             });
+
 
         video.srcObject=stream;
 
         detecting=true;
+
         detected=false;
+
         lastCapture=0;
 
         start.disabled=true;
@@ -619,9 +648,7 @@ start.onclick=async()=>{
             "SUCCESS"
         );
 
-        requestAnimationFrame(
-            detectColor
-        );
+        requestAnimationFrame(detectColor);
 
     }catch(e){
 
@@ -642,44 +669,48 @@ start.onclick=async()=>{
 
 function detectColor(){
 
-    if(
-        !detecting||
-        video.readyState<2
-    ){
+    if(!detecting||video.readyState<2){
 
-        requestAnimationFrame(
-            detectColor
-        );
+        requestAnimationFrame(detectColor);
 
         return;
     }
+
 
     const w=video.videoWidth;
     const h=video.videoHeight;
 
+
     if(!w||!h){
 
-        requestAnimationFrame(
-            detectColor
-        );
+        requestAnimationFrame(detectColor);
 
         return;
     }
+
 
     canvas.width=w;
     canvas.height=h;
 
     ctx.drawImage(
         video,
-        0,0,w,h
+        0,
+        0,
+        w,
+        h
     );
 
+
     let img;
+
 
     try{
 
         img=ctx.getImageData(
-            0,0,w,h
+            0,
+            0,
+            w,
+            h
         );
 
     }catch(e){
@@ -689,18 +720,22 @@ function detectColor(){
             "ERROR"
         );
 
-        requestAnimationFrame(
-            detectColor
-        );
+        requestAnimationFrame(detectColor);
 
         return;
     }
 
+
     const data=img.data;
+
     const rgb=getRGB();
 
     let match=0;
+
     let checked=0;
+
+    const rangeHits=new Array(rgb.length).fill(0);
+
 
     for(
         let y=0;
@@ -722,59 +757,88 @@ function detectColor(){
 
             checked++;
 
-            if(
-                rgb.some(v=>
-                    r>=v.minR&&
-                    r<=v.maxR&&
-                    g>=v.minG&&
-                    g<=v.maxG&&
-                    b>=v.minB&&
-                    b<=v.maxB
-                )
-            ){
+
+            const nearest=
+                getNearestRange(
+                    r,
+                    g,
+                    b,
+                    rgb
+                );
+
+
+            if(nearest>=0){
 
                 match++;
+
+                rangeHits[nearest]++;
             }
         }
     }
 
+
     const detection=
         match/checked;
+
 
     rateText.textContent=
         `検出率：${(detection*100).toFixed(3)}%`;
 
-    if(
-        detection>=DETECTION_RATE
-    ){
+
+    if(detection>=DETECTION_RATE){
 
         status.textContent=
             "検出しました！";
+
 
         if(!detected){
 
             detected=true;
 
+
+            // 最も検出されたRGB範囲を選択
+            let bestRange=0;
+
+            for(
+                let i=1;
+                i<rangeHits.length;
+                i++
+            ){
+
+                if(
+                    rangeHits[i]>rangeHits[bestRange]
+                ){
+
+                    bestRange=i;
+                }
+            }
+
+
+            const rangeNumber=
+                bestRange+1;
+
+
             debug(
-                `指定色を検出！ 検出率=${(detection*100).toFixed(3)}%`,
+                `RGB範囲${rangeNumber}を検知`,
                 "DETECTED"
             );
 
+
             const now=Date.now();
 
+
             if(
-                now-lastCapture>=
-                CAPTURE_INTERVAL
+                now-lastCapture>=CAPTURE_INTERVAL
             ){
 
                 lastCapture=now;
 
-                takePhoto();
+                takePhoto(rangeNumber);
 
             }else{
 
                 debug(
-                    `1秒クールダウン中`,
+                    `1秒クールダウン中 (${CAPTURE_INTERVAL-(now-lastCapture)}ms)`,
                     "WARNING"
                 );
             }
@@ -788,9 +852,8 @@ function detectColor(){
             "検出しています…";
     }
 
-    requestAnimationFrame(
-        detectColor
-    );
+
+    requestAnimationFrame(detectColor);
 }
 
 
@@ -798,22 +861,24 @@ function detectColor(){
 // 撮影
 // ===============================
 
-function takePhoto(){
+function takePhoto(rangeNumber){
 
     debug("写真撮影開始");
 
-    canvas.width=
-        video.videoWidth;
 
-    canvas.height=
-        video.videoHeight;
+    canvas.width=video.videoWidth;
+
+    canvas.height=video.videoHeight;
+
 
     ctx.drawImage(
         video,
-        0,0,
+        0,
+        0,
         canvas.width,
         canvas.height
     );
+
 
     try{
 
@@ -823,17 +888,23 @@ function takePhoto(){
                 .9
             );
 
+
         photo.src=image;
 
         status.textContent=
             "Discordへ送信中…";
+
 
         debug(
             "写真作成成功",
             "SUCCESS"
         );
 
-        sendToDiscord(image);
+
+        sendToDiscord(
+            image,
+            rangeNumber
+        );
 
     }catch(e){
 
@@ -846,10 +917,13 @@ function takePhoto(){
 
 
 // ===============================
-// Discord
+// Discord送信
 // ===============================
 
-async function sendToDiscord(image){
+async function sendToDiscord(
+    image,
+    rangeNumber
+){
 
     if(
         !WEBHOOK||
@@ -867,19 +941,23 @@ async function sendToDiscord(image){
         return;
     }
 
+
     try{
 
         debug("Discord送信開始");
+
 
         const binary=
             atob(
                 image.split(",")[1]
             );
 
+
         const bytes=
             new Uint8Array(
                 binary.length
             );
+
 
         for(
             let i=0;
@@ -891,14 +969,17 @@ async function sendToDiscord(image){
                 binary.charCodeAt(i);
         }
 
+
         const blob=
             new Blob(
                 [bytes],
                 {type:"image/jpeg"}
             );
 
+
         const form=
             new FormData();
+
 
         form.append(
             "file",
@@ -906,13 +987,31 @@ async function sendToDiscord(image){
             "detected.jpg"
         );
 
+
+        const now=
+            new Date();
+
+
+        const time=
+            `${now.getFullYear()}/`+
+            `${now.getMonth()+1}/`+
+            `${now.getDate()}:`+
+            `${String(now.getHours()).padStart(2,"0")}:`+
+            `${String(now.getMinutes()).padStart(2,"0")}:`+
+            `${String(now.getSeconds()).padStart(2,"0")}`;
+
+
+        const message=
+            `[${time}]RGB範囲${rangeNumber}を検知しました`;
+
+
         form.append(
             "payload_json",
             JSON.stringify({
-                content:
-                    "🎯 指定色を検出しました！"
+                content:message
             })
         );
+
 
         const res=
             await fetch(
@@ -923,9 +1022,11 @@ async function sendToDiscord(image){
                 }
             );
 
+
         debug(
             `HTTPステータス: ${res.status}`
         );
+
 
         if(res.ok){
 
@@ -965,17 +1066,36 @@ async function sendToDiscord(image){
 // ===============================
 // 初期RGB
 // ===============================
-
+// Divine
 addRGBRange({
-    minR:100,maxR:185,
-    minG:5,maxG:75,
-    minB:0,maxB:45
+    minR:40,
+    maxR:80,
+    minG:122,
+    maxG:245,
+    minB:117,
+    maxB:235
 });
 
+
+// Ascended
 addRGBRange({
-    minR:30,maxR:75,
-    minG:55,maxG:145,
-    minB:94,maxB:185
+    minR:100,
+    maxR:185,
+    minG:5,
+    maxG:75,
+    minB:0,
+    maxB:45
+});
+
+
+// Forbidden
+addRGBRange({
+    minR:37,
+    maxR:75,
+    minG:75,
+    maxG:150,
+    minB:100,
+    maxB:200
 });
 
 </script>
