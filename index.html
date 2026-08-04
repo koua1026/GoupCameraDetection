@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>GOUP通知BOT</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+h2 {
+    margin: 15px 0;
+}
+
+#camera {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    background: black;
+}
+
+#canvas {
+    display: none;
+}
+
+#status {
+    margin: 12px auto;
+    padding: 14px;
+    width: 92%;
+    border-radius: 12px;
+    background: #333;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+#rate {
+    font-size: 15px;
+    color: #aaa;
+    margin: 8px;
+}
+
+button {
+    font-size: 18px;
+    padding: 12px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 10px;
+}
+
+#start {
+    background: #2196f3;
+    color: white;
+}
+
+#photo {
+    max-width: 95%;
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>GOUP通知BOT</h2>
+
+<video id="camera"
+       autoplay
+       playsinline>
+</video>
+
+<canvas id="canvas"></canvas>
+<div id="rate">
+    検出率：0%
+</div>
+
+<button id="start">
+    開始
+</button>
+
+<img id="photo">
+
+
+<script>
+
+// ========================================
+// Discord Webhook
+// ========================================
+
+// ここに自分のDiscord Webhook URLを入れる
+const DISCORD_WEBHOOK_URL =
+    "https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK";
+
+
+/*
+   ⚠️ 注意
+
+   このURLを公開HTMLに直接書くと、
+   HTMLを見た人にWebhook URLが
+   見られる可能性があります。
+
+   自分だけで使うテスト用として
+   使用してください。
+*/
+
+
+// ========================================
+// HTML要素
+// ========================================
+
+const video =
+    document.getElementById("camera");
+
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d", {
+        willReadFrequently: true
+    });
+
+const statusText =
+    document.getElementById("status");
+
+const rateText =
+    document.getElementById("rate");
+
+const photo =
+    document.getElementById("photo");
+
+const startButton =
+    document.getElementById("start");
+
+
+// ========================================
+// 検出するRGB範囲
+// ========================================
+
+const MAX_R = 186;
+const MAX_G = 77;
+const MAX_B = 43;
+
+const MIN_R = 103;
+const MIN_G = 6;
+const MIN_B = 0;
+
+
+// ========================================
+// 検出設定
+// ========================================
+
+const DETECTION_RATE = 0.001;
+
+const SAMPLE_STEP = 3;
+
+
+// ========================================
+// 状態
+// ========================================
+
+let stream = null;
+let detecting = false;
+
+let alreadyDetected = false;
+
+
+// ========================================
+// カメラ開始
+// ========================================
+
+startButton.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            stream =
+                await navigator.mediaDevices
+                .getUserMedia({
+
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    },
+
+                    audio: false
+
+                });
+
+
+            video.srcObject = stream;
+
+            detecting = true;
+
+            alreadyDetected = false;
+
+            statusText.textContent =
+                "検出しています…";
+
+            requestAnimationFrame(
+                detectColor
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            statusText.textContent =
+                "カメラを使用できません";
+
+        }
+
+    }
+);
+
+
+// ========================================
+// 色検出
+// ========================================
+
+function detectColor() {
+
+    if (
+        !detecting ||
+        video.readyState < 2
+    ) {
+
+        requestAnimationFrame(
+            detectColor
+        );
+
+        return;
+    }
+
+
+    const width =
+        video.videoWidth;
+
+    const height =
+        video.videoHeight;
+
+
+    if (
+        width === 0 ||
+        height === 0
+    ) {
+
+        requestAnimationFrame(
+            detectColor
+        );
+
+        return;
+    }
+
+
+    canvas.width = width;
+    canvas.height = height;
+
+
+    ctx.drawImage(
+        video,
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const imageData =
+        ctx.getImageData(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+    const data =
+        imageData.data;
+
+
+    let matchingPixels = 0;
+    let checkedPixels = 0;
+
+
+    for (
+        let y = 0;
+        y < height;
+        y += SAMPLE_STEP
+    ) {
+
+        for (
+            let x = 0;
+            x < width;
+            x += SAMPLE_STEP
+        ) {
+
+            const index =
+                (y * width + x) * 4;
+
+
+            const r =
+                data[index];
+
+            const g =
+                data[index + 1];
+
+            const b =
+                data[index + 2];
+
+
+            checkedPixels++;
+
+
+            const isTargetColor =
+
+                r >= MIN_R &&
+                r <= MAX_R &&
+
+                g >= MIN_G &&
+                g <= MAX_G &&
+
+                b >= MIN_B &&
+                b <= MAX_B;
+
+
+            if (isTargetColor) {
+
+                matchingPixels++;
+
+            }
+
+        }
+
+    }
+
+
+    const rate =
+        matchingPixels /
+        checkedPixels;
+
+
+    const percent =
+        (rate * 100).toFixed(3);
+
+
+    rateText.textContent =
+        "検出率：" + percent + "%";
+
+
+    // ====================================
+    // 色を検出
+    // ====================================
+
+    if (
+        rate >= DETECTION_RATE
+    ) {
+
+        statusText.textContent =
+            "検出しました！";
+
+
+        if (!alreadyDetected) {
+
+            alreadyDetected = true;
+
+            takePhoto();
+
+        }
+
+    }
+
+    else {
+
+        alreadyDetected = false;
+
+        statusText.textContent =
+            "検出しています…";
+
+    }
+
+
+    requestAnimationFrame(
+        detectColor
+    );
+}
+
+
+// ========================================
+// 撮影
+// ========================================
+
+function takePhoto() {
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+
+    ctx.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    const image =
+        canvas.toDataURL(
+            "image/jpeg",
+            0.95
+        );
+
+
+    photo.src = image;
+
+
+    statusText.textContent =
+        "送信中…";
+
+
+    sendToDiscord(image);
+
+}
+
+
+// ========================================
+// Discordへ送信
+// ========================================
+
+async function sendToDiscord(imageData) {
+
+    try {
+
+        // Base64部分を取り除く
+        const base64 =
+            imageData.split(",")[1];
+
+
+        // Base64 → バイナリ
+        const binary =
+            atob(base64);
+
+
+        const array =
+            new Uint8Array(
+                binary.length
+            );
+
+
+        for (
+            let i = 0;
+            i < binary.length;
+            i++
+        ) {
+
+            array[i] =
+                binary.charCodeAt(i);
+
+        }
+
+
+        const blob =
+            new Blob(
+                [array],
+                {
+                    type: "image/jpeg"
+                }
+            );
+
+
+        // FormData
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            blob,
+            "detected.jpg"
+        );
+
+
+        formData.append(
+            "payload_json",
+            JSON.stringify({
+
+                content:
+                    "検出しました！"
+
+            })
+        );
+
+
+        // Discordへ送信
+        const response =
+            await fetch(
+                DISCORD_WEBHOOK_URL,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        if (response.ok) {
+
+            statusText.textContent =
+                "送信完了！";
+
+        }
+
+        else {
+
+            statusText.textContent =
+                "送信に失敗しました";
+
+            console.error(
+                await response.text()
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        statusText.textContent =
+            "送信エラー";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
