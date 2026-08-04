@@ -2,72 +2,209 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GOUP通知BOT</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#f4f6f8;
+    color:#222;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    text-align:center;
 }
 
-body {
-    margin: 0;
-    background: #111;
-    color: white;
-    font-family: sans-serif;
-    text-align: center;
+h2{
+    margin:8px;
+    font-size:20px;
+    color:#222;
 }
 
-h2 {
-    margin: 15px 0;
+#camera{
+    width:100%;
+    max-height:42vh;
+    object-fit:contain;
+    background:#e5e7eb;
+    border-bottom:1px solid #ddd;
 }
 
-#camera {
-    width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-    background: black;
+#canvas{display:none}
+
+#status,#settings,#debugBox{
+    width:94%;
+    margin:7px auto;
+    border-radius:10px;
 }
 
-#canvas {
-    display: none;
+#status{
+    padding:8px;
+    background:white;
+    border:1px solid #ddd;
+    box-shadow:0 1px 4px #0001;
+    font-size:15px;
+    font-weight:bold;
 }
 
-#status {
-    margin: 12px auto;
-    padding: 14px;
-    width: 92%;
-    border-radius: 12px;
-    background: #333;
-    font-size: 19px;
-    font-weight: bold;
+#rate{
+    font-size:12px;
+    color:#666;
+    margin:4px;
 }
 
-#rate {
-    font-size: 15px;
-    color: #aaa;
-    margin: 8px;
+#settings{
+    padding:9px;
+    background:white;
+    border:1px solid #ddd;
+    box-shadow:0 1px 4px #0001;
+    text-align:left;
 }
 
-button {
-    font-size: 18px;
-    padding: 12px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 10px;
+#settings h3{
+    margin:0 0 7px;
+    font-size:14px;
+    color:#333;
 }
 
-#start {
-    background: #2196f3;
-    color: white;
+.range-box{
+    background:#f8fafc;
+    border:1px solid #d9dee5;
+    border-radius:8px;
+    padding:7px;
+    margin:6px 0;
 }
 
-#photo {
-    max-width: 95%;
-    margin-top: 15px;
+.range-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:4px;
+    font-size:12px;
+    color:#333;
 }
+
+.setting-row{
+    display:grid;
+    grid-template-columns:25px 1fr 1fr;
+    gap:5px;
+    margin:4px 0;
+    align-items:center;
+}
+
+.setting-row b{
+    font-size:12px;
+    color:#444;
+}
+
+.setting-row input{
+    width:100%;
+    height:28px;
+    padding:4px;
+    border-radius:5px;
+    border:1px solid #cbd1d8;
+    background:white;
+    color:#222;
+    font-size:13px;
+    outline:none;
+}
+
+.setting-row input:focus{
+    border-color:#2196f3;
+    box-shadow:0 0 0 2px #2196f322;
+}
+
+button{
+    border:0;
+    border-radius:7px;
+    font-size:14px;
+    padding:7px 13px;
+    margin:2px;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+#start,#addRange{
+    background:#2196f3;
+    color:white;
+}
+
+#start:disabled{
+    background:#aab4c0;
+}
+
+.delete-range{
+    background:#ef5350;
+    color:white;
+    font-size:11px;
+    padding:3px 7px;
+}
+
+#clearDebug{
+    background:#e8edf2;
+    color:#333;
+}
+
+#copyDebug{
+    background:#dce3ea;
+    color:#333;
+}
+
+#addRange{
+    width:100%;
+    margin-top:5px;
+}
+
+#photo{
+    max-width:90%;
+    max-height:180px;
+    margin-top:5px;
+    border-radius:8px;
+    box-shadow:0 2px 8px #0002;
+}
+
+#debugBox{
+    padding:8px;
+    background:white;
+    border:1px solid #ddd;
+    box-shadow:0 1px 4px #0001;
+    text-align:left;
+}
+
+#debugTitle{
+    font-weight:bold;
+    font-size:13px;
+    margin-bottom:5px;
+    color:#333;
+}
+
+#debugLog{
+    height:120px;
+    overflow-y:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+    font:11px monospace;
+    line-height:1.3;
+    background:#f7f8fa;
+    border:1px solid #e1e4e8;
+    border-radius:6px;
+    padding:5px;
+}
+
+.log-info{color:#444}
+.log-success{color:#008f55}
+.log-warning{color:#a07800}
+.log-error{color:#d71920}
+.log-detected{color:#0088cc}
+.log-promise{color:#d71920}
+
+#start{
+    box-shadow:0 2px 5px #0002;
+}
+
 </style>
 </head>
 
@@ -75,189 +212,440 @@ button {
 
 <h2>GOUP通知BOT</h2>
 
-<video id="camera"
-       autoplay
-       playsinline>
-</video>
-
+<video id="camera" autoplay playsinline></video>
 <canvas id="canvas"></canvas>
-<div id="rate">
-    検出率：0%
+
+<div id="status">開始ボタンを押してください</div>
+
+<div id="rate">検出率：0%</div>
+
+<div id="settings">
+
+<h3>
+RGB検出範囲:<br>
+Ascended (100,5,0)～(185,75,45)<br>
+Forbidden (30,55,94)～(75,145,185)
+</h3>
+
+<div id="ranges"></div>
+
+<button id="addRange">
+＋ RGB範囲を追加
+</button>
+
+<div style="font-size:10px;color:#777;margin-top:4px">
+各範囲のどれか1つに一致すると検出します
+</div>
+
 </div>
 
 <button id="start">
-    開始
+開始
 </button>
 
 <img id="photo">
 
+<div id="debugBox">
+
+<div id="debugTitle">
+🛠 DEBUG LOG
+</div>
+
+<div id="debugLog">
+起動しました
+</div>
+
+<button id="clearDebug">
+ログをクリア
+</button>
+
+<button id="copyDebug">
+ログをコピー
+</button>
+
+</div>
 
 <script>
 
-// ========================================
-// Discord Webhook
-// ========================================
+// ===============================
+// 設定
+// ===============================
 
-// ここに自分のDiscord Webhook URLを入れる
-const DISCORD_WEBHOOK_URL =
-    "https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK";
+const WEBHOOK="ここにWebhook URL";
 
+const DETECTION_RATE=0.0005;
 
-/*
-   ⚠️ 注意
+const SAMPLE_STEP=1;
 
-   このURLを公開HTMLに直接書くと、
-   HTMLを見た人にWebhook URLが
-   見られる可能性があります。
-
-   自分だけで使うテスト用として
-   使用してください。
-*/
+const CAPTURE_INTERVAL=1000;
 
 
-// ========================================
-// HTML要素
-// ========================================
+// ===============================
+// HTML
+// ===============================
 
-const video =
-    document.getElementById("camera");
+const $=id=>document.getElementById(id);
 
-const canvas =
-    document.getElementById("canvas");
+const video=$("camera");
+const canvas=$("canvas");
+const ctx=canvas.getContext("2d",{willReadFrequently:true});
 
-const ctx =
-    canvas.getContext("2d", {
-        willReadFrequently: true
-    });
-
-const statusText =
-    document.getElementById("status");
-
-const rateText =
-    document.getElementById("rate");
-
-const photo =
-    document.getElementById("photo");
-
-const startButton =
-    document.getElementById("start");
+const status=$("status");
+const rateText=$("rate");
+const photo=$("photo");
+const start=$("start");
+const debugLog=$("debugLog");
+const ranges=$("ranges");
 
 
-// ========================================
-// 検出するRGB範囲
-// ========================================
+// ===============================
+// DEBUG
+// ===============================
 
-const MAX_R = 186;
-const MAX_G = 77;
-const MAX_B = 43;
+function debug(msg,type="INFO"){
 
-const MIN_R = 103;
-const MIN_G = 6;
-const MIN_B = 0;
+    const div=document.createElement("div");
 
+    div.textContent=
+        `[${new Date().toLocaleTimeString()}] [${type}] ${msg}`;
 
-// ========================================
-// 検出設定
-// ========================================
+    div.className={
+        ERROR:"log-error",
+        WARNING:"log-warning",
+        SUCCESS:"log-success",
+        DETECTED:"log-detected",
+        "PROMISE ERROR":"log-promise"
+    }[type]||"log-info";
 
-const DETECTION_RATE = 0.001;
+    debugLog.appendChild(div);
 
-const SAMPLE_STEP = 3;
+    debugLog.scrollTop=
+        debugLog.scrollHeight;
 
+    console.log(div.textContent);
+}
 
-// ========================================
-// 状態
-// ========================================
-
-let stream = null;
-let detecting = false;
-
-let alreadyDetected = false;
-
-
-// ========================================
-// カメラ開始
-// ========================================
-
-startButton.addEventListener(
-    "click",
-    async () => {
-
-        try {
-
-            stream =
-                await navigator.mediaDevices
-                .getUserMedia({
-
-                    video: {
-                        facingMode: {
-                            ideal: "environment"
-                        }
-                    },
-
-                    audio: false
-
-                });
-
-
-            video.srcObject = stream;
-
-            detecting = true;
-
-            alreadyDetected = false;
-
-            statusText.textContent =
-                "検出しています…";
-
-            requestAnimationFrame(
-                detectColor
-            );
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-            statusText.textContent =
-                "カメラを使用できません";
-
-        }
-
-    }
+window.addEventListener("error",e=>
+    debug(
+        `${e.message} | ${e.filename}:${e.lineno}:${e.colno}`,
+        "ERROR"
+    )
 );
 
+window.addEventListener("unhandledrejection",e=>
+    debug(String(e.reason),"PROMISE ERROR")
+);
 
-// ========================================
+$("clearDebug").onclick=()=>{
+    debugLog.innerHTML="";
+    debug("DEBUGログをクリアしました");
+};
+
+$("copyDebug").onclick=async()=>{
+    try{
+        await navigator.clipboard.writeText(
+            debugLog.innerText
+        );
+
+        debug(
+            "DEBUGログをコピーしました",
+            "SUCCESS"
+        );
+
+    }catch(e){
+
+        debug(
+            "ログのコピー失敗: "+e.message,
+            "ERROR"
+        );
+    }
+};
+
+
+// ===============================
+// RGB範囲
+// ===============================
+
+let rangeCount=0;
+
+function addRGBRange(v={}){
+
+    const id=++rangeCount;
+
+    v={
+        minR:v.minR??100,
+        maxR:v.maxR??185,
+        minG:v.minG??5,
+        maxG:v.maxG??75,
+        minB:v.minB??0,
+        maxB:v.maxB??45
+    };
+
+    const box=document.createElement("div");
+
+    box.className="range-box";
+
+    box.innerHTML=`
+
+        <div class="range-header">
+
+            <b>RGB範囲 ${id}</b>
+
+            <button class="delete-range">
+                削除
+            </button>
+
+        </div>
+
+        ${rgbRow("R",v.minR,v.maxR)}
+        ${rgbRow("G",v.minG,v.maxG)}
+        ${rgbRow("B",v.minB,v.maxB)}
+    `;
+
+    ranges.appendChild(box);
+
+    box.querySelector(".delete-range").onclick=()=>{
+
+        if(ranges.children.length<=1){
+
+            debug(
+                "RGB範囲は最低1つ必要です",
+                "WARNING"
+            );
+
+            return;
+        }
+
+        box.remove();
+
+        renumber();
+
+        debug(
+            `RGB範囲 ${id} を削除しました`,
+            "SUCCESS"
+        );
+    };
+}
+
+function rgbRow(name,min,max){
+
+    return `
+    <div class="setting-row">
+
+        <b>${name}</b>
+
+        <input
+            class="min${name}"
+            type="number"
+            min="0"
+            max="255"
+            value="${min}">
+
+        <input
+            class="max${name}"
+            type="number"
+            min="0"
+            max="255"
+            value="${max}">
+
+    </div>`;
+}
+
+function renumber(){
+
+    [...ranges.children].forEach((box,i)=>{
+
+        box.querySelector("b").textContent=
+            `RGB範囲 ${i+1}`;
+
+    });
+}
+
+function getRGB(){
+
+    return [...ranges.children].map(box=>({
+
+        minR:+box.querySelector(".minR").value,
+        maxR:+box.querySelector(".maxR").value,
+
+        minG:+box.querySelector(".minG").value,
+        maxG:+box.querySelector(".maxG").value,
+
+        minB:+box.querySelector(".minB").value,
+        maxB:+box.querySelector(".maxB").value
+
+    }));
+}
+
+function validateRGB(){
+
+    const rs=getRGB();
+
+    if(!rs.length){
+
+        debug(
+            "RGB範囲がありません",
+            "ERROR"
+        );
+
+        return false;
+    }
+
+    for(let i=0;i<rs.length;i++){
+
+        const r=rs[i];
+
+        const values=[
+            r.minR,r.maxR,
+            r.minG,r.maxG,
+            r.minB,r.maxB
+        ];
+
+        if(
+            values.some(
+                v=>!Number.isFinite(v)||v<0||v>255
+            )
+        ){
+
+            debug(
+                `RGB範囲 ${i+1} に不正な値があります`,
+                "ERROR"
+            );
+
+            return false;
+        }
+
+        if(
+            r.minR>r.maxR||
+            r.minG>r.maxG||
+            r.minB>r.maxB
+        ){
+
+            debug(
+                `RGB範囲 ${i+1} の下限が上限を超えています`,
+                "ERROR"
+            );
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+$("addRange").onclick=()=>{
+
+    addRGBRange();
+
+    debug(
+        "RGB範囲を追加しました",
+        "SUCCESS"
+    );
+};
+
+
+// ===============================
+// カメラ
+// ===============================
+
+let stream=null;
+let detecting=false;
+let detected=false;
+let lastCapture=0;
+
+start.onclick=async()=>{
+
+    debug("カメラ起動処理を開始");
+
+    if(!validateRGB()){
+
+        status.textContent=
+            "RGB設定を確認してください";
+
+        return;
+    }
+
+    if(stream){
+
+        debug(
+            "カメラはすでに起動しています",
+            "WARNING"
+        );
+
+        return;
+    }
+
+    if(!navigator.mediaDevices?.getUserMedia){
+
+        debug(
+            "getUserMediaが利用できません",
+            "ERROR"
+        );
+
+        status.textContent=
+            "この環境ではカメラを使用できません";
+
+        return;
+    }
+
+    try{
+
+        stream=
+            await navigator.mediaDevices.getUserMedia({
+
+                video:{
+                    facingMode:{
+                        ideal:"environment"
+                    }
+                },
+
+                audio:false
+
+            });
+
+        video.srcObject=stream;
+
+        detecting=true;
+        detected=false;
+        lastCapture=0;
+
+        start.disabled=true;
+
+        status.textContent=
+            "検出しています…";
+
+        debug(
+            "カメラ起動成功",
+            "SUCCESS"
+        );
+
+        requestAnimationFrame(
+            detectColor
+        );
+
+    }catch(e){
+
+        debug(
+            `カメラ起動失敗: ${e.name} / ${e.message}`,
+            "ERROR"
+        );
+
+        status.textContent=
+            "カメラを使用できません";
+    }
+};
+
+
+// ===============================
 // 色検出
-// ========================================
+// ===============================
 
-function detectColor() {
+function detectColor(){
 
-    if (
-        !detecting ||
-        video.readyState < 2
-    ) {
-
-        requestAnimationFrame(
-            detectColor
-        );
-
-        return;
-    }
-
-
-    const width =
-        video.videoWidth;
-
-    const height =
-        video.videoHeight;
-
-
-    if (
-        width === 0 ||
-        height === 0
-    ) {
+    if(
+        !detecting||
+        video.readyState<2
+    ){
 
         requestAnimationFrame(
             detectColor
@@ -266,133 +654,139 @@ function detectColor() {
         return;
     }
 
+    const w=video.videoWidth;
+    const h=video.videoHeight;
 
-    canvas.width = width;
-    canvas.height = height;
+    if(!w||!h){
 
+        requestAnimationFrame(
+            detectColor
+        );
+
+        return;
+    }
+
+    canvas.width=w;
+    canvas.height=h;
 
     ctx.drawImage(
         video,
-        0,
-        0,
-        width,
-        height
+        0,0,w,h
     );
 
+    let img;
 
-    const imageData =
-        ctx.getImageData(
-            0,
-            0,
-            width,
-            height
+    try{
+
+        img=ctx.getImageData(
+            0,0,w,h
         );
 
+    }catch(e){
 
-    const data =
-        imageData.data;
+        debug(
+            "画像データ取得失敗: "+e.message,
+            "ERROR"
+        );
 
+        requestAnimationFrame(
+            detectColor
+        );
 
-    let matchingPixels = 0;
-    let checkedPixels = 0;
-
-
-    for (
-        let y = 0;
-        y < height;
-        y += SAMPLE_STEP
-    ) {
-
-        for (
-            let x = 0;
-            x < width;
-            x += SAMPLE_STEP
-        ) {
-
-            const index =
-                (y * width + x) * 4;
-
-
-            const r =
-                data[index];
-
-            const g =
-                data[index + 1];
-
-            const b =
-                data[index + 2];
-
-
-            checkedPixels++;
-
-
-            const isTargetColor =
-
-                r >= MIN_R &&
-                r <= MAX_R &&
-
-                g >= MIN_G &&
-                g <= MAX_G &&
-
-                b >= MIN_B &&
-                b <= MAX_B;
-
-
-            if (isTargetColor) {
-
-                matchingPixels++;
-
-            }
-
-        }
-
+        return;
     }
 
+    const data=img.data;
+    const rgb=getRGB();
 
-    const rate =
-        matchingPixels /
-        checkedPixels;
+    let match=0;
+    let checked=0;
 
+    for(
+        let y=0;
+        y<h;
+        y+=SAMPLE_STEP
+    ){
 
-    const percent =
-        (rate * 100).toFixed(3);
+        for(
+            let x=0;
+            x<w;
+            x+=SAMPLE_STEP
+        ){
 
+            const i=(y*w+x)*4;
 
-    rateText.textContent =
-        "検出率：" + percent + "%";
+            const r=data[i];
+            const g=data[i+1];
+            const b=data[i+2];
 
+            checked++;
 
-    // ====================================
-    // 色を検出
-    // ====================================
+            if(
+                rgb.some(v=>
+                    r>=v.minR&&
+                    r<=v.maxR&&
+                    g>=v.minG&&
+                    g<=v.maxG&&
+                    b>=v.minB&&
+                    b<=v.maxB
+                )
+            ){
 
-    if (
-        rate >= DETECTION_RATE
-    ) {
+                match++;
+            }
+        }
+    }
 
-        statusText.textContent =
+    const detection=
+        match/checked;
+
+    rateText.textContent=
+        `検出率：${(detection*100).toFixed(3)}%`;
+
+    if(
+        detection>=DETECTION_RATE
+    ){
+
+        status.textContent=
             "検出しました！";
 
+        if(!detected){
 
-        if (!alreadyDetected) {
+            detected=true;
 
-            alreadyDetected = true;
+            debug(
+                `指定色を検出！ 検出率=${(detection*100).toFixed(3)}%`,
+                "DETECTED"
+            );
 
-            takePhoto();
+            const now=Date.now();
 
+            if(
+                now-lastCapture>=
+                CAPTURE_INTERVAL
+            ){
+
+                lastCapture=now;
+
+                takePhoto();
+
+            }else{
+
+                debug(
+                    `1秒クールダウン中`,
+                    "WARNING"
+                );
+            }
         }
 
-    }
+    }else{
 
-    else {
+        detected=false;
 
-        alreadyDetected = false;
-
-        statusText.textContent =
+        status.textContent=
             "検出しています…";
-
     }
-
 
     requestAnimationFrame(
         detectColor
@@ -400,156 +794,189 @@ function detectColor() {
 }
 
 
-// ========================================
+// ===============================
 // 撮影
-// ========================================
+// ===============================
 
-function takePhoto() {
+function takePhoto(){
 
-    canvas.width =
+    debug("写真撮影開始");
+
+    canvas.width=
         video.videoWidth;
 
-    canvas.height =
+    canvas.height=
         video.videoHeight;
-
 
     ctx.drawImage(
         video,
-        0,
-        0,
+        0,0,
         canvas.width,
         canvas.height
     );
 
+    try{
 
-    const image =
-        canvas.toDataURL(
-            "image/jpeg",
-            0.95
+        const image=
+            canvas.toDataURL(
+                "image/jpeg",
+                .9
+            );
+
+        photo.src=image;
+
+        status.textContent=
+            "Discordへ送信中…";
+
+        debug(
+            "写真作成成功",
+            "SUCCESS"
         );
 
+        sendToDiscord(image);
 
-    photo.src = image;
+    }catch(e){
 
-
-    statusText.textContent =
-        "送信中…";
-
-
-    sendToDiscord(image);
-
+        debug(
+            "画像作成失敗: "+e.message,
+            "ERROR"
+        );
+    }
 }
 
 
-// ========================================
-// Discordへ送信
-// ========================================
+// ===============================
+// Discord
+// ===============================
 
-async function sendToDiscord(imageData) {
+async function sendToDiscord(image){
 
-    try {
+    if(
+        !WEBHOOK||
+        WEBHOOK==="ここにWebhook URL"
+    ){
 
-        // Base64部分を取り除く
-        const base64 =
-            imageData.split(",")[1];
+        debug(
+            "Webhook URLが設定されていません",
+            "ERROR"
+        );
 
+        status.textContent=
+            "Webhook URL未設定";
 
-        // Base64 → バイナリ
-        const binary =
-            atob(base64);
+        return;
+    }
 
+    try{
 
-        const array =
+        debug("Discord送信開始");
+
+        const binary=
+            atob(
+                image.split(",")[1]
+            );
+
+        const bytes=
             new Uint8Array(
                 binary.length
             );
 
-
-        for (
-            let i = 0;
-            i < binary.length;
+        for(
+            let i=0;
+            i<binary.length;
             i++
-        ) {
+        ){
 
-            array[i] =
+            bytes[i]=
                 binary.charCodeAt(i);
-
         }
 
-
-        const blob =
+        const blob=
             new Blob(
-                [array],
-                {
-                    type: "image/jpeg"
-                }
+                [bytes],
+                {type:"image/jpeg"}
             );
 
-
-        // FormData
-        const formData =
+        const form=
             new FormData();
 
-
-        formData.append(
+        form.append(
             "file",
             blob,
             "detected.jpg"
         );
 
-
-        formData.append(
+        form.append(
             "payload_json",
             JSON.stringify({
-
                 content:
-                    "検出しました！"
-
+                    "🎯 指定色を検出しました！"
             })
         );
 
-
-        // Discordへ送信
-        const response =
+        const res=
             await fetch(
-                DISCORD_WEBHOOK_URL,
+                WEBHOOK,
                 {
-                    method: "POST",
-                    body: formData
+                    method:"POST",
+                    body:form
                 }
             );
 
+        debug(
+            `HTTPステータス: ${res.status}`
+        );
 
-        if (response.ok) {
+        if(res.ok){
 
-            statusText.textContent =
-                "送信完了！";
-
-        }
-
-        else {
-
-            statusText.textContent =
-                "送信に失敗しました";
-
-            console.error(
-                await response.text()
+            debug(
+                "Discord送信成功",
+                "SUCCESS"
             );
 
+            status.textContent=
+                "送信完了！";
+
+        }else{
+
+            debug(
+                "Discord送信失敗: "+
+                await res.text(),
+                "ERROR"
+            );
+
+            status.textContent=
+                "Discord送信失敗";
         }
 
+    }catch(e){
+
+        debug(
+            `Discord送信エラー: ${e.name} / ${e.message}`,
+            "ERROR"
+        );
+
+        status.textContent=
+            "Discord送信エラー";
     }
-
-    catch (error) {
-
-        console.error(error);
-
-        statusText.textContent =
-            "送信エラー";
-
-    }
-
 }
+
+
+// ===============================
+// 初期RGB
+// ===============================
+
+addRGBRange({
+    minR:100,maxR:185,
+    minG:5,maxG:75,
+    minB:0,maxB:45
+});
+
+addRGBRange({
+    minR:30,maxR:75,
+    minG:55,maxG:145,
+    minB:94,maxB:185
+});
 
 </script>
 
