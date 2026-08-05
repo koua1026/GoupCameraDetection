@@ -33,6 +33,7 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
 .hint{font-size:12px;color:var(--muted)}
 .floating-clone{position:fixed;top:18px;right:18px;width:170px;height:auto;z-index:9999;border-radius:10px;box-shadow:0 10px 30px rgba(2,6,23,.12);object-fit:cover;visibility:hidden;opacity:0;transition:opacity .12s ease}
 .floating-clone.visible{visibility:visible;opacity:1}
+.range-label-input{width:160px;padding:6px;border-radius:6px;border:1px solid rgba(15,23,36,.06);font-size:13px}
 @media(max-width:980px){.layout{grid-template-columns:1fr;padding-bottom:30px}.floating-clone{right:10px;top:76px}video#camera{height:220px}}
 </style>
 </head>
@@ -144,7 +145,7 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
 /* --- STATE / helpers --- */
 const STATE = {
   WEBHOOK: "https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK",
-  DETECTION_RATE: 0.001, // ratio (0..1)
+  DETECTION_RATE: 0.001,
   SAMPLE_STEP: 1,
   CAPTURE_DELAY: 250,
   CAPTURE_INTERVAL: 1000,
@@ -156,14 +157,11 @@ const STATE = {
   captureTimer: null,
   idCount: 0
 };
-
 const $ = id => document.getElementById(id);
-const qs = sel => document.querySelector(sel);
 const log = (msg, cls="log-info") => {
   const t = new Date().toLocaleTimeString();
   const d = document.createElement("div"); d.textContent = `[${t}] ${msg}`; d.className = cls;
-  $('debugLog').appendChild(d);
-  $('debugLog').scrollTop = $('debugLog').scrollHeight;
+  $('debugLog').appendChild(d); $('debugLog').scrollTop = $('debugLog').scrollHeight;
   console.log(msg);
 };
 window.addEventListener("error", e => log(`${e.message} | ${e.filename}:${e.lineno}:${e.colno}`, "log-error"));
@@ -182,25 +180,12 @@ const el = {
 
 /* --- UI wiring --- */
 function setRangeUI() {
-  el.captureDelayInput.addEventListener('input', e => {
-    STATE.CAPTURE_DELAY = +e.target.value;
-    el.captureDelayValue.textContent = `${STATE.CAPTURE_DELAY} ms`;
-  });
-  el.sampleStepInput.addEventListener('input', e => {
-    STATE.SAMPLE_STEP = +e.target.value;
-    el.sampleStepValue.textContent = STATE.SAMPLE_STEP;
-  });
-  el.detectionRateInput.addEventListener('input', e => {
-    const p = +e.target.value;
-    STATE.DETECTION_RATE = p / 100;
-    el.detectionRateValue.textContent = `${p.toFixed(3)}%`;
-  });
+  el.captureDelayInput.addEventListener('input', e => { STATE.CAPTURE_DELAY = +e.target.value; el.captureDelayValue.textContent = `${STATE.CAPTURE_DELAY} ms`; });
+  el.sampleStepInput.addEventListener('input', e => { STATE.SAMPLE_STEP = +e.target.value; el.sampleStepValue.textContent = STATE.SAMPLE_STEP; });
+  el.detectionRateInput.addEventListener('input', e => { const p = +e.target.value; STATE.DETECTION_RATE = p / 100; el.detectionRateValue.textContent = `${p.toFixed(3)}%`; });
   el.webhookInput.addEventListener('input', e => STATE.WEBHOOK = e.target.value.trim());
   $('clearDebugBtn').onclick = () => { $('debugLog').innerHTML=''; log('DEBUGログをクリアしました','log-info'); };
-  $('copyDebug').onclick = async () => {
-    try { await navigator.clipboard.writeText($('debugLog').innerText); log('DEBUGログをコピーしました','log-success'); }
-    catch (e) { log('ログコピー失敗: '+e.message,'log-error'); }
-  };
+  $('copyDebug').onclick = async () => { try { await navigator.clipboard.writeText($('debugLog').innerText); log('DEBUGログをコピーしました','log-success'); } catch (e) { log('ログコピー失敗: '+e.message,'log-error'); } };
   $('toggleDebug').onclick = ()=> $('debugLog').parentElement.parentElement.classList.toggle('collapsed');
   el.testWebhook.onclick = async ()=>{
     if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log("Webhook が設定されていません",'log-error'); alert("Webhook を入力してください"); return; }
@@ -212,38 +197,57 @@ function setRangeUI() {
   };
 }
 
-/* --- RGB range UI --- */
-function rangeHTML(id, v={minR:100,maxR:185,minG:5,maxG:75,minB:0,maxB:45}) {
+/* --- RGB range UI (editable label) --- */
+function rangeHTML(id, v={minR:100,maxR:185,minG:5,maxG:75,minB:0,maxB:45}, label){
+  const labelPart = label ? ` — ${label}` : '';
+  const labelVal = label ? label : '';
   return `
-    <div class="range-box" data-id="${id}">
+    <div class="range-box" data-id="${id}" ${label ? `data-label="${label}"` : ''}>
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="font-weight:600">RGB 範囲 ${id}</div>
+        <div style="font-weight:600">RGB 範囲 ${id}${labelPart}</div>
         <button class="delete" style="background:transparent;border:none;color:var(--danger);cursor:pointer">削除</button>
       </div>
-      ${['R','G','B'].map(ch=>`<div style="display:grid;grid-template-columns:34px 1fr 1fr;gap:8px;align-items:center">
+      <div style="margin:6px 0 8px;display:flex;gap:8px;align-items:center">
+        <input class="labelInput range-label-input" type="text" placeholder="ラベル (例: Divine)" value="${labelVal}">
+        <div style="font-size:12px;color:var(--muted)">ラベルは編集可能です</div>
+      </div>
+      ${['R','G','B'].map(ch=>`<div style="display:grid;grid-template-columns:34px 1fr 1fr;gap:8px;align-items:center;margin-top:6px">
         <b>${ch}</b>
         <input class="min${ch}" type="number" min="0" max="255" value="${v['min'+ch]}">
         <input class="max${ch}" type="number" min="0" max="255" value="${v['max'+ch]}">
       </div>`).join('')}
     </div>`;
 }
-function addRange(v){
+function addRange(v, label){
   const id = ++STATE.idCount;
-  const div = document.createElement('div'); div.innerHTML = rangeHTML(id,v);
+  const div = document.createElement('div'); div.innerHTML = rangeHTML(id,v,label);
   el.rangesBox.appendChild(div.firstElementChild);
-  updateRangeDeleteHandlers();
-  log(`RGB範囲を追加しました (id=${id})`,'log-success');
+  updateRangeHandlers();
+  log(`RGB範囲を追加しました (id=${id}${label ? ', label='+label : ''})`,'log-success');
 }
-function updateRangeDeleteHandlers(){
-  [...el.rangesBox.querySelectorAll('.range-box')].forEach(box=>{
+function updateRangeHandlers(){
+  [...el.rangesBox.querySelectorAll('.range-box')].forEach((box, idx)=>{
     const btn = box.querySelector('.delete');
     btn.onclick = ()=>{
       if(el.rangesBox.children.length <= 1){ log('RGB範囲は最低1つ必要です','log-info'); return; }
       box.remove(); renumberRanges(); log('RGB範囲を削除しました','log-success');
     };
+    const labelInput = box.querySelector('.labelInput');
+    if(labelInput){
+      labelInput.oninput = () => {
+        const label = labelInput.value.trim();
+        if(label) box.dataset.label = label;
+        else delete box.dataset.label;
+        const header = box.querySelector('div').firstChild;
+        header.textContent = `RGB 範囲 ${idx+1}${label ? ' — '+label : ''}`;
+      };
+    }
   });
 }
-function renumberRanges(){ [...el.rangesBox.children].forEach((b,i)=> b.querySelector('div').firstChild.textContent = `RGB 範囲 ${i+1}`); }
+function renumberRanges(){ [...el.rangesBox.children].forEach((b,i)=> {
+  const label = b.dataset.label;
+  b.querySelector('div').firstChild.textContent = `RGB 範囲 ${i+1}${label ? ' — '+label : ''}`;
+}); }
 function getRanges(){ return [...el.rangesBox.children].map(box=>({
   minR:+box.querySelector('.minR').value, maxR:+box.querySelector('.maxR').value,
   minG:+box.querySelector('.minG').value, maxG:+box.querySelector('.maxG').value,
@@ -312,13 +316,14 @@ function detectColor(){
       STATE.detected = true;
       let best=0; for(let i=1;i<rangeHits.length;i++) if(rangeHits[i] > rangeHits[best]) best = i;
       const rangeNumber = best + 1;
-      log(`RGB範囲${rangeNumber}を検知`,'log-success');
+      const label = (el.rangesBox.children[best]?.dataset.label) || (el.rangesBox.children[best]?.querySelector('.labelInput')?.value.trim()) || 'Unnamed';
+      log(`RGB範囲${rangeNumber}${label ? ' — '+label : ''}を検知`,'log-success');
       const now = Date.now();
       if(now - STATE.lastCapture >= STATE.CAPTURE_INTERVAL){
         STATE.lastCapture = now;
         log(`RGB検出から${STATE.CAPTURE_DELAY}ms後に撮影します`,'log-info');
         clearTimeout(STATE.captureTimer);
-        STATE.captureTimer = setTimeout(()=> STATE.detecting && takePhoto(rangeNumber), STATE.CAPTURE_DELAY);
+        STATE.captureTimer = setTimeout(()=> STATE.detecting && takePhoto(rangeNumber, label), STATE.CAPTURE_DELAY);
       } else {
         log(`クールダウン中 (${STATE.CAPTURE_INTERVAL - (now - STATE.lastCapture)}ms)`,'log-info');
       }
@@ -330,26 +335,30 @@ function detectColor(){
 }
 
 /* --- 撮影・送信 --- */
-async function takePhoto(rangeNumber){
+async function takePhoto(rangeNumber, label){
   log('写真撮影開始','log-info');
   canvas.width = el.video.videoWidth; canvas.height = el.video.videoHeight; ctx.drawImage(el.video,0,0,canvas.width,canvas.height);
   try {
     const dataUrl = canvas.toDataURL('image/jpeg',0.9); el.photo.src = dataUrl; el.status.textContent = 'Discordへ送信中…'; log('写真作成成功','log-success');
-    if(STATE.SEND_ENABLED) await sendToDiscord(dataUrl, rangeNumber);
+    const usedLabel = label || (el.rangesBox.children[rangeNumber-1]?.dataset.label) || (el.rangesBox.children[rangeNumber-1]?.querySelector('.labelInput')?.value.trim()) || 'Unnamed';
+    if(STATE.SEND_ENABLED) await sendToDiscord(dataUrl, rangeNumber, usedLabel);
     else { log('Discord送信は無効化されています。送信をスキップしました。','log-info'); el.status.textContent = '送信スキップ（OFF）'; }
   } catch(e){ log('画像作成失敗: '+e.message,'log-error'); }
 }
-async function sendToDiscord(dataUrl, rangeNumber){
+async function sendToDiscord(dataUrl, rangeNumber, label){
   if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log('Webhook URLが設定されていません','log-error'); el.status.textContent='Webhook URL未設定'; return; }
   try {
     log('Discord送信開始','log-info');
     const blob = await (await fetch(dataUrl)).blob();
     const form = new FormData(); form.append('file', blob, 'detected.jpg');
-    const now = new Date(); const time = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}:${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-    form.append('payload_json', JSON.stringify({content:`[${time}]RGB範囲${rangeNumber}を検知しました`}));
+    const now = new Date();
+    const time = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}:${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    const safeLabel = label || 'Unnamed';
+    const contentText = `[${time}] 範囲${rangeNumber}-${safeLabel}がSpawnしました`;
+    form.append('payload_json', JSON.stringify({content: contentText}));
     const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
     log(`HTTPステータス: ${res.status}`);
-    if(res.ok){ log('Discord送信成功','log-success'); el.status.textContent='送信完了！'; }
+    if(res.ok){ log(`送信成功: ${contentText}`,'log-success'); el.status.textContent='送信完了！'; }
     else { log('Discord送信失敗: '+await res.text(),'log-error'); el.status.textContent='Discord送信失敗'; }
   } catch(e){ log(`Discord送信エラー: ${e.name} / ${e.message}`,'log-error'); el.status.textContent='Discord送信エラー'; }
 }
@@ -373,12 +382,12 @@ window.addEventListener('beforeunload', ()=>{
   if(STATE.stream) STATE.stream.getTracks().forEach(t=>t.stop());
 });
 
-/* --- init --- */
+/* --- init (初期範囲にラベルを設定) --- */
 (function init(){
   setRangeUI();
-  addRange({minR:60,maxR:150,minG:200,maxG:255,minB:220,maxB:255});
-  addRange({minR:120,maxR:220,minG:25,maxG:115,minB:25,maxB:60});
-  addRange({minR:37,maxR:75,minG:75,maxG:150,minB:100,maxB:200});
+  addRange({minR:60,maxR:150,minG:200,maxG:255,minB:220,maxB:255}, 'Divine');
+  addRange({minR:120,maxR:220,minG:25,maxG:115,minB:25,maxB:60}, 'Ascended');
+  addRange({minR:37,maxR:75,minG:75,maxG:150,minB:100,maxB:200}, 'Forbidden');
   el.addRange.onclick = ()=> addRange();
   el.addRangeTop.onclick = ()=> addRange();
   window.addEventListener('error', e => log(e.message, 'log-error'));
