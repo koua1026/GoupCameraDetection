@@ -1,156 +1,64 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GOUP通知BOT</title>
-
-<!-- 高品質フォント（任意） -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
-:root{
-  --bg:#f4f6f9;
-  --card:#ffffff;
-  --muted:#667085;
-  --accent:#0066ff;
-  --accent-2:#0b5cff;
-  --danger:#ef4444;
-  --glass: rgba(255,255,255,0.6);
-  --radius:14px;
-  --shadow: 0 8px 30px rgba(16,24,40,0.08);
-  --soft-shadow: 0 4px 18px rgba(16,24,40,0.06);
-}
-
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family:"Inter", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
-  background:linear-gradient(180deg,var(--bg),#eef2f6);
-  color:#0f1724;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  padding:28px;
-}
-
-/* Top bar */
-.header{
-  max-width:1080px;margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;
-}
-.brand{
-  display:flex;align-items:center;gap:12px;
-}
-.logo{
-  width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow);
-}
-.title{
-  font-size:18px;font-weight:600;
-  letter-spacing:0.2px;
-}
+:root{--bg:#f4f6f9;--card:#fff;--muted:#667085;--accent:#0066ff;--accent-2:#0b5cff;--danger:#ef4444;--radius:14px;--shadow:0 8px 30px rgba(16,24,40,0.08);--soft-shadow:0 4px 18px rgba(16,24,40,0.06)}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:"Inter",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;background:linear-gradient(180deg,var(--bg),#eef2f6);color:#0f1724;padding:28px;-webkit-font-smoothing:antialiased}
+.header{max-width:1080px;margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow)}
+.title{font-size:18px;font-weight:600}
 .subtitle{font-size:12px;color:var(--muted)}
-
-/* Page layout */
-.layout{
-  max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:22px;
-}
-
-/* Left: big card with video */
-.card{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--soft-shadow);padding:18px;
-}
-.camera-card{display:flex;flex-direction:column;gap:12px;align-items:stretch;min-height:320px}
-.camera-area{position:relative;border-radius:10px;overflow:hidden;background:#e6eaf0;border:1px solid rgba(15,23,36,0.04);}
+.layout{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:22px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--soft-shadow);padding:18px}
+.camera-card{display:flex;flex-direction:column;gap:12px;min-height:320px}
+.camera-area{position:relative;border-radius:10px;overflow:hidden;background:#e6eaf0;border:1px solid rgba(15,23,36,.04)}
 video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display:block}
-.photo-preview{width:160px;border-radius:8px;border:1px solid rgba(15,23,36,0.04);box-shadow:0 6px 18px rgba(2,6,23,0.06)}
-
-/* Right: controls */
-.controls{display:flex;flex-direction:column;gap:12px}
-.panel{background:linear-gradient(180deg,var(--card),#fbfdff);padding:14px;border-radius:12px;border:1px solid rgba(15,23,36,0.04);box-shadow:var(--soft-shadow)}
-.status{font-weight:600;font-size:15px;text-align:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(15,23,36,0.03)}
-.rate{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
-
-/* settings list */
+.photo-preview{width:160px;border-radius:8px;border:1px solid rgba(15,23,36,.04);box-shadow:0 6px 18px rgba(2,6,23,.06)}
+.panel{background:linear-gradient(180deg,var(--card),#fbfdff);padding:14px;border-radius:12px;border:1px solid rgba(15,23,36,.04);box-shadow:var(--soft-shadow)}
+.status{font-weight:600;font-size:15px;text-align:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(15,23,36,.03)}
 #ranges{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow:auto;padding-right:6px}
-.range-box{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,0.03)}
-.range-left{display:flex;flex-direction:column;gap:6px}
-.range-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.setting-row{display:grid;grid-template-columns:34px 1fr 1fr;gap:8px;align-items:center}
-.setting-row b{font-size:12px;color:var(--muted)}
-.setting-row input{height:36px;border-radius:8px;border:1px solid rgba(15,23,36,0.06);padding:6px 10px;background:transparent;font-size:13px}
-
-/* buttons */
+.range-box{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,.03)}
+.system-setting{display:flex;flex-direction:column;gap:6px;padding:11px;margin-bottom:10px;border-radius:10px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,.04)}
+.system-setting-title{font-weight:600;font-size:13px}
+.system-setting-value{font-size:12px;color:var(--accent);font-weight:600}
 .btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;border:none}
-.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 20px rgba(11,92,255,0.12)}
-.btn-ghost{background:transparent;border:1px solid rgba(15,23,36,0.06);color:var(--muted)}
-.btn-danger{background:var(--danger);color:#fff}
-
-/* debug area */
-.debug-box{font-family:monospace;font-size:12px;color:var(--muted);height:140px;overflow:auto;border-radius:8px;background:linear-gradient(180deg,#0f172408,#0f172404);padding:10px;color:#0f1724}
-
-/* footer small */
+.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 20px rgba(11,92,255,.12)}
+.btn-ghost{background:transparent;border:1px solid rgba(15,23,36,.06);color:var(--muted)}
+.debug-box{font-family:monospace;font-size:12px;height:140px;overflow:auto;border-radius:8px;background:linear-gradient(180deg,#0f172408,#0f172404);padding:10px;color:#0f1724}
 .hint{font-size:12px;color:var(--muted)}
-
-/* floating preview (clone) */
-.floating-clone{
-  position:fixed;top:18px;right:18px;width:170px;height:auto;z-index:9999;border-radius:10px;box-shadow:0 10px 30px rgba(2,6,23,0.12);object-fit:cover;visibility:hidden;opacity:0;transition:opacity .12s ease;
-}
+.floating-clone{position:fixed;top:18px;right:18px;width:170px;height:auto;z-index:9999;border-radius:10px;box-shadow:0 10px 30px rgba(2,6,23,.12);object-fit:cover;visibility:hidden;opacity:0;transition:opacity .12s ease}
 .floating-clone.visible{visibility:visible;opacity:1}
-
-/* responsive */
-@media (max-width:980px){
-  .layout{grid-template-columns:1fr; padding-bottom:30px}
-  .floating-clone{right:10px;top:76px}
-  video#camera{height:220px}
-}
+@media(max-width:980px){.layout{grid-template-columns:1fr;padding-bottom:30px}.floating-clone{right:10px;top:76px}video#camera{height:220px}}
 </style>
 </head>
 <body>
-
-<!-- header -->
 <div class="header">
-  <div class="brand">
-    <div class="logo">G</div>
-    <div>
-      <div class="title">GOUP 通知 BOT</div>
-      <div class="subtitle">高感度 RGB 検出と Discord 通知</div>
-    </div>
-  </div>
-
+  <div class="brand"><div class="logo">G</div><div><div class="title">GOUP 通知 BOT</div><div class="subtitle">高感度 RGB 検出と Discord 通知</div></div></div>
   <div style="display:flex;align-items:center;gap:10px">
-    <button id="addRangeTop" class="btn btn-ghost" title="範囲を追加">＋ 範囲追加</button>
-    <button id="toggleDebug" class="btn btn-ghost" title="デバッグログを表示">DEBUG</button>
+    <button id="addRangeTop" class="btn btn-ghost">＋ 範囲追加</button>
+    <button id="toggleDebug" class="btn btn-ghost">DEBUG</button>
   </div>
 </div>
 
-<!-- main layout -->
 <div class="layout">
-
-  <!-- left: camera + photo + status -->
   <div class="card camera-card">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-      <div style="display:flex;flex-direction:column">
-        <div style="font-weight:700">カメラプレビュー</div>
-        <div style="color:var(--muted);font-size:13px">スクロール時は右上に固定で表示されます</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <div id="status" class="status">開始ボタンを押してください</div>
-      </div>
+      <div style="display:flex;flex-direction:column"><div style="font-weight:700">カメラプレビュー</div><div style="color:var(--muted);font-size:13px">スクロール時は右上に固定で表示されます</div></div>
+      <div style="display:flex;gap:10px;align-items:center"><div id="status" class="status">開始ボタンを押してください</div></div>
     </div>
 
-    <div class="camera-area" aria-hidden="false">
-      <video id="camera" autoplay playsinline muted></video>
-    </div>
+    <div class="camera-area"><video id="camera" autoplay playsinline muted></video></div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-      <div style="display:flex;flex-direction:column">
-        <div style="font-size:13px;font-weight:600">検出率</div>
-        <div id="rate" class="hint">検出率：0%</div>
-      </div>
-
+      <div style="display:flex;flex-direction:column"><div style="font-size:13px;font-weight:600">検出率</div><div id="rate" class="hint">検出率：0%</div></div>
       <div style="display:flex;align-items:center;gap:8px">
         <button id="start" class="btn btn-primary">開始</button>
+        <button id="sendToggle" class="btn btn-ghost">送信停止</button>
         <button id="clearDebugBtn" class="btn btn-ghost">ログ消去</button>
       </div>
     </div>
@@ -164,16 +72,44 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
     </div>
   </div>
 
-  <!-- right: controls -->
   <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="panel">
+      <div style="font-weight:700;margin-bottom:10px">検出システム設定</div>
+
+      <div class="system-setting">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="system-setting-title">検知後の撮影遅延</div>
+          <div id="captureDelayValue" class="system-setting-value">250 ms</div>
+        </div>
+        <input id="captureDelayInput" type="range" min="0" max="2000" step="10" value="250">
+        <div class="hint">RGBを検知してから撮影するまでの時間</div>
+      </div>
+
+      <div class="system-setting">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="system-setting-title">SAMPLE_STEP</div>
+          <div id="sampleStepValue" class="system-setting-value">1</div>
+        </div>
+        <input id="sampleStepInput" type="range" min="1" max="20" step="1" value="1">
+        <div class="hint">小さいほど細かく検出します。大きくすると処理が軽くなります。</div>
+      </div>
+
+      <div class="system-setting">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="system-setting-title">認識判定の検出率</div>
+          <div id="detectionRateValue" class="system-setting-value">0.100%</div>
+        </div>
+        <input id="detectionRateInput" type="range" min="0.001" max="10" step="0.001" value="0.1">
+        <div class="hint">この検出率以上になったときRGBを検知したと判断します。</div>
+      </div>
+    </div>
+
     <div class="panel">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div style="font-weight:700">RGB 検出設定</div>
         <div style="font-size:12px;color:var(--muted)">複数範囲は中心に近い方を優先</div>
       </div>
-
       <div id="ranges"></div>
-
       <div style="margin-top:12px;display:flex;gap:8px">
         <button id="addRange" class="btn btn-primary">＋ RGB 範囲を追加</button>
         <button id="copyDebug" class="btn btn-ghost">ログをコピー</button>
@@ -185,256 +121,268 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
         <div style="font-weight:700">送信 / 状態</div>
         <div style="font-size:13px;color:var(--muted)">Webhook</div>
       </div>
-
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;gap:8px">
-          <input id="webhookInput" placeholder="Webhook URL をここに入力" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(15,23,36,0.06)">
+          <input id="webhookInput" placeholder="Webhook URL をここに入力" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(15,23,36,.06)">
           <button id="testWebhook" class="btn btn-ghost">テスト送信</button>
         </div>
-
         <div style="font-size:12px;color:var(--muted)">送信は撮影時に自動で行われます。画像は圧縮して送信されます。</div>
       </div>
     </div>
 
     <div class="panel" style="text-align:center">
       <div style="font-weight:700;margin-bottom:8px">ヒント</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.5">
-        ・誤認が続く場合は範囲を狭めるか閾値を調整して下さい。<br>
-        ・反応が鈍ければ SAMPLE_STEP を下げて検出精度を上げてください（負荷増）。
-      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5">・誤認が続く場合はRGB範囲を狭めてください。<br>・反応が鈍ければSAMPLE_STEPを下げてください。<br>・検出率を下げると少ない一致でも検知します。</div>
     </div>
   </div>
 </div>
 
-<!-- floating preview element (clone) -->
 <video class="floating-clone" id="floatingClone" autoplay playsinline muted></video>
-
-<!-- hidden canvas used by detection -->
 <canvas id="canvas" style="display:none"></canvas>
 
 <script>
-/* ========== 既存のロジック（機能は保持） ========== */
-
-/* 設定 */
-let WEBHOOK = "ここにWebhook URL"; // default (右側入力で上書きできます）
-const DETECTION_RATE = 0.001;
-let SAMPLE_STEP = 1;
-const CAPTURE_INTERVAL = 1000;
-  const CAPTURE_DELAY = 250; // RGB検出から撮影までの遅延（ms）
-
-/* 要素 */
-const $ = id=>document.getElementById(id);
-const cameraWrap = $("cameraWrap") || document.body;
-const video = $("camera");
-const canvas = $("canvas");
-const ctx = canvas.getContext("2d",{willReadFrequently:true});
-const floatingVideo = $("floatingClone");
-const status = $("status");
-const rateText = $("rate");
-const photo = $("photo");
-const startBtn = $("start");
-const rangesBox = $("ranges");
-const debugLog = $("debugLog");
-const addRangeBtn = $("addRange");
-const addRangeTop = $("addRangeTop");
-const clearDebugBtn = $("clearDebugBtn");
-const copyDebugBtn = $("copyDebug");
-const toggleDebugBtn = $("toggleDebug");
-const webhookInput = $("webhookInput");
-const testWebhook = $("testWebhook");
-
-/* デバッグ */
-function debug(msg,cls="log-info"){
-  const time=new Date().toLocaleTimeString();
-  const text=`[${time}] ${msg}`;
-  const div=document.createElement("div");
-  div.textContent=text;
-  div.className=cls;
-  debugLog.appendChild(div);
-  debugLog.scrollTop = debugLog.scrollHeight;
-  console.log(text);
-}
-window.addEventListener("error",e=>debug(`${e.message} | ${e.filename}:${e.lineno}:${e.colno}`,"log-error"));
-window.addEventListener("unhandledrejection",e=>debug(String(e.reason),"log-error"));
-
-clearDebugBtn.onclick = ()=>{ debugLog.innerHTML=""; debug("DEBUGログをクリアしました","log-info"); };
-copyDebugBtn.onclick = async ()=>{
-  try{ await navigator.clipboard.writeText(debugLog.innerText); debug("DEBUGログをコピーしました","log-success"); }catch(e){ debug("ログコピー失敗: "+e.message,"log-error"); }
-};
-toggleDebugBtn.onclick = ()=>{
-  debugLog.parentElement.parentElement.classList.toggle('collapsed');
-  // visually we already show debug in left panel; user can hide via this
-  const visible = debugLog.parentElement.parentElement.classList.contains('collapsed');
-  toggleDebugBtn.textContent = visible ? "DEBUG" : "DEBUG";
+/* --- STATE / helpers --- */
+const STATE = {
+  WEBHOOK: "https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK",
+  DETECTION_RATE: 0.001, // ratio (0..1)
+  SAMPLE_STEP: 1,
+  CAPTURE_DELAY: 250,
+  CAPTURE_INTERVAL: 1000,
+  SEND_ENABLED: true,
+  stream: null,
+  detecting: false,
+  detected: false,
+  lastCapture: 0,
+  captureTimer: null,
+  idCount: 0
 };
 
-/* UI: webhook input sync */
-webhookInput.addEventListener('input', e => { WEBHOOK = e.target.value.trim(); });
+const $ = id => document.getElementById(id);
+const qs = sel => document.querySelector(sel);
+const log = (msg, cls="log-info") => {
+  const t = new Date().toLocaleTimeString();
+  const d = document.createElement("div"); d.textContent = `[${t}] ${msg}`; d.className = cls;
+  $('debugLog').appendChild(d);
+  $('debugLog').scrollTop = $('debugLog').scrollHeight;
+  console.log(msg);
+};
+window.addEventListener("error", e => log(`${e.message} | ${e.filename}:${e.lineno}:${e.colno}`, "log-error"));
+window.addEventListener("unhandledrejection", e => log(String(e.reason), "log-error"));
 
-testWebhook.addEventListener('click', async ()=>{
-  if(!WEBHOOK || WEBHOOK==="ここにWebhook URL"){ debug("Webhook が設定されていません","log-error"); alert("Webhook を入力してください"); return; }
-  try{
-    const form = new FormData();
-    form.append("payload_json", JSON.stringify({content: "[テスト] GOUP通知BOT テストメッセージ"}));
-    const res = await fetch(WEBHOOK,{method:"POST",body:form});
-    if(res.ok) alert("テスト送信成功"); else alert("テスト送信失敗: "+res.status);
-  }catch(e){
-    alert("送信エラー: "+e.message);
-  }
-});
+/* elements */
+const el = {
+  video: $('camera'), floating: $('floatingClone'), status: $('status'), rate: $('rate'), photo: $('photo'),
+  start: $('start'), sendToggle: $('sendToggle'), clearDebug: $('clearDebugBtn'),
+  addRange: $('addRange'), addRangeTop: $('addRangeTop'), rangesBox: $('ranges'),
+  captureDelayInput: $('captureDelayInput'), captureDelayValue: $('captureDelayValue'),
+  sampleStepInput: $('sampleStepInput'), sampleStepValue: $('sampleStepValue'),
+  detectionRateInput: $('detectionRateInput'), detectionRateValue: $('detectionRateValue'),
+  webhookInput: $('webhookInput'), testWebhook: $('testWebhook')
+};
 
-/* RGB 範囲 UI（既存ロジックベース） */
-let idCount=0;
-function row(name,min,max){ return `<div class="setting-row"><b>${name}</b><input class="min${name}" type="number" min="0" max="255" value="${min}"><input class="max${name}" type="number" min="0" max="255" value="${max}"></div>`; }
-function addRange(v={minR:100,maxR:185,minG:5,maxG:75,minB:0,maxB:45}){
-  const id=++idCount;
-  const box=document.createElement("div");
-  box.className="range-box";
-  box.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-weight:600">RGB 範囲 ${id}</div><button class="delete" style="background:transparent;border:none;color:${getComputedStyle(document.documentElement).getPropertyValue('--danger')||'#e53935'};cursor:pointer">削除</button></div>` + row("R",v.minR,v.maxR) + row("G",v.minG,v.maxG) + row("B",v.minB,v.maxB);
-  rangesBox.appendChild(box);
-  box.querySelector('.delete').onclick = ()=>{
-    if(rangesBox.children.length<=1){ debug("RGB範囲は最低1つ必要です","log-info"); return; }
-    box.remove();
-    renumber();
-    debug(`RGB範囲 ${id} を削除しました`,"log-success");
+/* --- UI wiring --- */
+function setRangeUI() {
+  el.captureDelayInput.addEventListener('input', e => {
+    STATE.CAPTURE_DELAY = +e.target.value;
+    el.captureDelayValue.textContent = `${STATE.CAPTURE_DELAY} ms`;
+  });
+  el.sampleStepInput.addEventListener('input', e => {
+    STATE.SAMPLE_STEP = +e.target.value;
+    el.sampleStepValue.textContent = STATE.SAMPLE_STEP;
+  });
+  el.detectionRateInput.addEventListener('input', e => {
+    const p = +e.target.value;
+    STATE.DETECTION_RATE = p / 100;
+    el.detectionRateValue.textContent = `${p.toFixed(3)}%`;
+  });
+  el.webhookInput.addEventListener('input', e => STATE.WEBHOOK = e.target.value.trim());
+  $('clearDebugBtn').onclick = () => { $('debugLog').innerHTML=''; log('DEBUGログをクリアしました','log-info'); };
+  $('copyDebug').onclick = async () => {
+    try { await navigator.clipboard.writeText($('debugLog').innerText); log('DEBUGログをコピーしました','log-success'); }
+    catch (e) { log('ログコピー失敗: '+e.message,'log-error'); }
+  };
+  $('toggleDebug').onclick = ()=> $('debugLog').parentElement.parentElement.classList.toggle('collapsed');
+  el.testWebhook.onclick = async ()=>{
+    if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log("Webhook が設定されていません",'log-error'); alert("Webhook を入力してください"); return; }
+    try {
+      const form = new FormData(); form.append('payload_json', JSON.stringify({content:'[テスト] GOUP通知BOT テストメッセージ'}));
+      const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
+      alert(res.ok ? 'テスト送信成功' : 'テスト送信失敗: '+res.status);
+    } catch(e) { alert('送信エラー: '+e.message); }
   };
 }
-function renumber(){ [...rangesBox.children].forEach((b,i)=>b.querySelector('div').firstChild.textContent=`RGB 範囲 ${i+1}`); }
-function getRGB(){ return [...rangesBox.children].map(box=>({
-  minR:+box.querySelector('.minR').value,maxR:+box.querySelector('.maxR').value,
-  minG:+box.querySelector('.minG').value,maxG:+box.querySelector('.maxG').value,
-  minB:+box.querySelector('.minB').value,maxB:+box.querySelector('.maxB').value
+
+/* --- RGB range UI --- */
+function rangeHTML(id, v={minR:100,maxR:185,minG:5,maxG:75,minB:0,maxB:45}) {
+  return `
+    <div class="range-box" data-id="${id}">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-weight:600">RGB 範囲 ${id}</div>
+        <button class="delete" style="background:transparent;border:none;color:var(--danger);cursor:pointer">削除</button>
+      </div>
+      ${['R','G','B'].map(ch=>`<div style="display:grid;grid-template-columns:34px 1fr 1fr;gap:8px;align-items:center">
+        <b>${ch}</b>
+        <input class="min${ch}" type="number" min="0" max="255" value="${v['min'+ch]}">
+        <input class="max${ch}" type="number" min="0" max="255" value="${v['max'+ch]}">
+      </div>`).join('')}
+    </div>`;
+}
+function addRange(v){
+  const id = ++STATE.idCount;
+  const div = document.createElement('div'); div.innerHTML = rangeHTML(id,v);
+  el.rangesBox.appendChild(div.firstElementChild);
+  updateRangeDeleteHandlers();
+  log(`RGB範囲を追加しました (id=${id})`,'log-success');
+}
+function updateRangeDeleteHandlers(){
+  [...el.rangesBox.querySelectorAll('.range-box')].forEach(box=>{
+    const btn = box.querySelector('.delete');
+    btn.onclick = ()=>{
+      if(el.rangesBox.children.length <= 1){ log('RGB範囲は最低1つ必要です','log-info'); return; }
+      box.remove(); renumberRanges(); log('RGB範囲を削除しました','log-success');
+    };
+  });
+}
+function renumberRanges(){ [...el.rangesBox.children].forEach((b,i)=> b.querySelector('div').firstChild.textContent = `RGB 範囲 ${i+1}`); }
+function getRanges(){ return [...el.rangesBox.children].map(box=>({
+  minR:+box.querySelector('.minR').value, maxR:+box.querySelector('.maxR').value,
+  minG:+box.querySelector('.minG').value, maxG:+box.querySelector('.maxG').value,
+  minB:+box.querySelector('.minB').value, maxB:+box.querySelector('.maxB').value
 })); }
-function validateRGB(){ const rs=getRGB(); if(!rs.length){ debug("RGB範囲がありません","log-error"); return false; } for(let i=0;i<rs.length;i++){ const r=rs[i]; const values=[r.minR,r.maxR,r.minG,r.maxG,r.minB,r.maxB]; if(values.some(v=>!Number.isFinite(v)||v<0||v>255)){ debug(`RGB範囲 ${i+1} に不正な値があります`,"log-error"); return false; } if(r.minR>r.maxR||r.minG>r.maxG||r.minB>r.maxB){ debug(`RGB範囲 ${i+1} の下限が上限を超えています`,"log-error"); return false; } } return true; }
-
-addRangeBtn.onclick = ()=>{ addRange(); debug("RGB範囲を追加しました","log-success"); };
-addRangeTop.onclick = ()=>{ addRange(); debug("RGB範囲を追加しました","log-success"); };
-
-/* 初期範囲 */
-addRange({minR:60,maxR:150,minG:200,maxG:255,minB:220,maxB:255});
-addRange({minR:120,maxR:220,minG:25,maxG:115,minB:25,maxB:60});
-addRange({minR:37,maxR:75,minG:75,maxG:150,minB:100,maxB:200});
-
-/* 色認識関係（元の近接 RGB 実装をキープ） */
-function getNearestRange(r,g,b,rs){ const c=[]; rs.forEach((v,i)=>{ if(r>=v.minR&&r<=v.maxR&&g>=v.minG&&g<=v.maxG&&b>=v.minB&&b<=v.maxB){ const cr=(v.minR+v.maxR)/2, cg=(v.minG+v.maxG)/2, cb=(v.minB+v.maxB)/2; c.push({i,dist:Math.hypot(r-cr,g-cg,b-cb)}); } }); if(!c.length) return -1; c.sort((a,b)=>a.dist-b.dist); return c[0].i; }
-
-/* カメラ + 検出（元コードの挙動を維持） */
-let stream=null, detecting=false, detected=false, lastCapture=0, captureTimer=null;
-
-startBtn.onclick = async ()=>{
-  debug("カメラ起動処理を開始");
-  if(!validateRGB()){ status.textContent="RGB設定を確認してください"; return; }
-  if(stream){ debug("カメラはすでに起動しています","log-info"); return; }
-  if(!navigator.mediaDevices?.getUserMedia){ debug("getUserMediaが利用できません","log-error"); status.textContent="この環境ではカメラを使用できません"; return; }
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
-    video.srcObject = stream;
-    // floating clone にも stream をセットしておく（右上プレビュー）
-    floatingVideo.srcObject = stream;
-    try{ await floatingVideo.play(); }catch(e){}
-    detecting=true; detected=false; lastCapture=0; startBtn.disabled=true; status.textContent="検出しています…"; debug("カメラ起動成功","log-success");
-    requestAnimationFrame(detectColor);
-  }catch(e){
-    debug(`カメラ起動失敗: ${e.name} / ${e.message}`,"log-error");
-    status.textContent="カメラを使用できません";
+function validateRanges(){
+  const rs = getRanges(); if(!rs.length){ log('RGB範囲がありません','log-error'); return false; }
+  for(let i=0;i<rs.length;i++){
+    const r = rs[i]; const vals=[r.minR,r.maxR,r.minG,r.maxG,r.minB,r.maxB];
+    if(vals.some(v=>!Number.isFinite(v)||v<0||v>255)){ log(`RGB範囲 ${i+1} に不正な値があります`,'log-error'); return false;}
+    if(r.minR>r.maxR||r.minG>r.maxG||r.minB>r.maxB){ log(`RGB範囲 ${i+1} の下限が上限を超えています`,'log-error'); return false; }
   }
-};
+  return true;
+}
+
+/* --- RGB 判定 --- */
+function getNearestRange(r,g,b,rs){
+  const hits = [];
+  rs.forEach((v,i)=>{
+    if(r>=v.minR && r<=v.maxR && g>=v.minG && g<=v.maxG && b>=v.minB && b<=v.maxB){
+      const cr=(v.minR+v.maxR)/2, cg=(v.minG+v.maxG)/2, cb=(v.minB+v.maxB)/2;
+      hits.push({i,dist:Math.hypot(r-cr,g-cg,b-cb)});
+    }
+  });
+  if(!hits.length) return -1;
+  hits.sort((a,b)=>a.dist-b.dist); return hits[0].i;
+}
+
+/* --- カメラ / 検出 --- */
+const canvas = $('canvas'); const ctx = canvas.getContext('2d',{willReadFrequently:true});
+async function startCamera(){
+  log('カメラ起動処理を開始');
+  if(!validateRanges()){ el.status.textContent = 'RGB設定を確認してください'; return; }
+  if(STATE.stream){ log('カメラはすでに起動しています','log-info'); return; }
+  if(!navigator.mediaDevices?.getUserMedia){ log('getUserMediaが利用できません','log-error'); el.status.textContent='この環境ではカメラを使用できません'; return; }
+  try {
+    STATE.stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
+    el.video.srcObject = STATE.stream; el.floating.srcObject = STATE.stream; try{ await el.floating.play(); }catch(e){}
+    STATE.detecting=true; STATE.detected=false; STATE.lastCapture=0; el.start.disabled=true; el.status.textContent='検出しています…'; log('カメラ起動成功','log-success');
+    requestAnimationFrame(detectColor);
+  } catch(e) { log(`カメラ起動失敗: ${e.name} / ${e.message}`, 'log-error'); el.status.textContent='カメラを使用できません'; }
+}
+el.start.onclick = startCamera;
 
 function detectColor(){
-  if(!detecting||video.readyState<2){ requestAnimationFrame(detectColor); return; }
-  const w=video.videoWidth, h=video.videoHeight;
-  if(!w||!h){ requestAnimationFrame(detectColor); return; }
-  canvas.width=w; canvas.height=h; ctx.drawImage(video,0,0,w,h);
+  if(!STATE.detecting || el.video.readyState < 2){ requestAnimationFrame(detectColor); return; }
+  const w = el.video.videoWidth, h = el.video.videoHeight; if(!w||!h){ requestAnimationFrame(detectColor); return; }
+  canvas.width = w; canvas.height = h; ctx.drawImage(el.video,0,0,w,h);
   let img;
-  try{ img=ctx.getImageData(0,0,w,h); }catch(e){ debug("画像データ取得失敗: "+e.message,"log-error"); requestAnimationFrame(detectColor); return; }
-  const data=img.data, rs=getRGB(); let match=0, checked=0; const rangeHits=new Array(rs.length).fill(0);
-  for(let y=0;y<h;y+=SAMPLE_STEP) for(let x=0;x<w;x+=SAMPLE_STEP){
-    const i=(y*w+x)*4;
-    const r=data[i], g=data[i+1], b=data[i+2];
-    checked++;
-    const nearest = getNearestRange(r,g,b,rs);
-    if(nearest>=0){ match++; rangeHits[nearest]++; }
+  try { img = ctx.getImageData(0,0,w,h); }
+  catch(e){ log('画像データ取得失敗: '+e.message,'log-error'); requestAnimationFrame(detectColor); return; }
+  const data = img.data; const rs = getRanges();
+  let match=0, checked=0; const rangeHits = new Array(rs.length).fill(0);
+  for(let y=0;y<h;y+=STATE.SAMPLE_STEP){
+    for(let x=0;x<w;x+=STATE.SAMPLE_STEP){
+      const i = (y*w + x) * 4; const r = data[i], g = data[i+1], b = data[i+2]; checked++;
+      const nearest = getNearestRange(r,g,b,rs);
+      if(nearest >= 0){ match++; rangeHits[nearest]++; }
+    }
   }
   const detection = match/checked;
-  rateText.textContent = `検出率：${(detection*100).toFixed(3)}%`;
-  if(detection >= DETECTION_RATE){
-    status.textContent = "検出しました！";
-    if(!detected){
-      detected=true;
-      let bestRange=0;
-      for(let i=1;i<rangeHits.length;i++) if(rangeHits[i]>rangeHits[bestRange]) bestRange=i;
-      const rangeNumber=bestRange+1;
-      debug(`RGB範囲${rangeNumber}を検知`,"log-success");
-      const now=Date.now();
-      if(now-lastCapture>=CAPTURE_INTERVAL){
-        lastCapture=now;
-        debug(`RGB検出から${CAPTURE_DELAY}ms後に撮影します`,"log-info");
-        clearTimeout(captureTimer);
-        captureTimer=setTimeout(()=>{
-          if(detecting){
-            takePhoto(rangeNumber);
-          }
-        },CAPTURE_DELAY);
-      } else debug(`クールダウン中 (${CAPTURE_INTERVAL-(now-lastCapture)}ms)`,"log-info");
+  el.rate.textContent = `検出率：${(detection*100).toFixed(3)}%`;
+  if(detection >= STATE.DETECTION_RATE){
+    el.status.textContent = '検出しました！';
+    if(!STATE.detected){
+      STATE.detected = true;
+      let best=0; for(let i=1;i<rangeHits.length;i++) if(rangeHits[i] > rangeHits[best]) best = i;
+      const rangeNumber = best + 1;
+      log(`RGB範囲${rangeNumber}を検知`,'log-success');
+      const now = Date.now();
+      if(now - STATE.lastCapture >= STATE.CAPTURE_INTERVAL){
+        STATE.lastCapture = now;
+        log(`RGB検出から${STATE.CAPTURE_DELAY}ms後に撮影します`,'log-info');
+        clearTimeout(STATE.captureTimer);
+        STATE.captureTimer = setTimeout(()=> STATE.detecting && takePhoto(rangeNumber), STATE.CAPTURE_DELAY);
+      } else {
+        log(`クールダウン中 (${STATE.CAPTURE_INTERVAL - (now - STATE.lastCapture)}ms)`,'log-info');
+      }
     }
   } else {
-    detected=false;
-    status.textContent="検出しています…";
+    STATE.detected = false; el.status.textContent = '検出しています…';
   }
   requestAnimationFrame(detectColor);
 }
 
-/* 撮影・送信 */
-function takePhoto(rangeNumber){
-  debug("写真撮影開始","log-info");
-  canvas.width = video.videoWidth; canvas.height = video.videoHeight; ctx.drawImage(video,0,0,canvas.width,canvas.height);
-  try{
-    const image = canvas.toDataURL("image/jpeg",0.9);
-    photo.src = image;
-    status.textContent = "Discordへ送信中…";
-    debug("写真作成成功","log-success");
-    sendToDiscord(image, rangeNumber);
-  }catch(e){ debug("画像作成失敗: "+e.message,"log-error"); }
+/* --- 撮影・送信 --- */
+async function takePhoto(rangeNumber){
+  log('写真撮影開始','log-info');
+  canvas.width = el.video.videoWidth; canvas.height = el.video.videoHeight; ctx.drawImage(el.video,0,0,canvas.width,canvas.height);
+  try {
+    const dataUrl = canvas.toDataURL('image/jpeg',0.9); el.photo.src = dataUrl; el.status.textContent = 'Discordへ送信中…'; log('写真作成成功','log-success');
+    if(STATE.SEND_ENABLED) await sendToDiscord(dataUrl, rangeNumber);
+    else { log('Discord送信は無効化されています。送信をスキップしました。','log-info'); el.status.textContent = '送信スキップ（OFF）'; }
+  } catch(e){ log('画像作成失敗: '+e.message,'log-error'); }
+}
+async function sendToDiscord(dataUrl, rangeNumber){
+  if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log('Webhook URLが設定されていません','log-error'); el.status.textContent='Webhook URL未設定'; return; }
+  try {
+    log('Discord送信開始','log-info');
+    const blob = await (await fetch(dataUrl)).blob();
+    const form = new FormData(); form.append('file', blob, 'detected.jpg');
+    const now = new Date(); const time = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}:${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    form.append('payload_json', JSON.stringify({content:`[${time}]RGB範囲${rangeNumber}を検知しました`}));
+    const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
+    log(`HTTPステータス: ${res.status}`);
+    if(res.ok){ log('Discord送信成功','log-success'); el.status.textContent='送信完了！'; }
+    else { log('Discord送信失敗: '+await res.text(),'log-error'); el.status.textContent='Discord送信失敗'; }
+  } catch(e){ log(`Discord送信エラー: ${e.name} / ${e.message}`,'log-error'); el.status.textContent='Discord送信エラー'; }
 }
 
-async function sendToDiscord(image,rangeNumber){
-  if(!WEBHOOK || WEBHOOK==="ここにWebhook URL"){ debug("Webhook URLが設定されていません","log-error"); status.textContent="Webhook URL未設定"; return; }
-  try{
-    debug("Discord送信開始","log-info");
-    const binary = atob(image.split(",")[1]);
-    const bytes = new Uint8Array(binary.length);
-    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-    const blob = new Blob([bytes],{type:"image/jpeg"});
-    const form = new FormData();
-    form.append("file", blob, "detected.jpg");
-    const now = new Date();
-    const time = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}:${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}:${String(now.getSeconds()).padStart(2,"0")}`;
-    form.append("payload_json", JSON.stringify({content:`[${time}]RGB範囲${rangeNumber}を検知しました`}));
-    const res = await fetch(WEBHOOK, { method:"POST", body:form });
-    debug(`HTTPステータス: ${res.status}`);
-    if(res.ok){ debug("Discord送信成功","log-success"); status.textContent="送信完了！"; } else { debug("Discord送信失敗: "+await res.text(),"log-error"); status.textContent="Discord送信失敗"; }
-  }catch(e){ debug(`Discord送信エラー: ${e.name} / ${e.message}`,"log-error"); status.textContent="Discord送信エラー"; }
-}
+/* --- 送信トグル / Floating preview / 終了処理 --- */
+function updateSendButton(){ el.sendToggle.textContent = STATE.SEND_ENABLED ? '送信停止' : '送信開始'; el.sendToggle.classList.toggle('btn-primary', STATE.SEND_ENABLED); }
+el.sendToggle.onclick = ()=>{ STATE.SEND_ENABLED = !STATE.SEND_ENABLED; updateSendButton(); log(STATE.SEND_ENABLED ? 'Discord送信を有効にしました' : 'Discord送信を無効にしました','log-info'); el.status.textContent = STATE.SEND_ENABLED ? '送信有効' : '送信停止中'; };
+updateSendButton();
 
-/* Floating clone visibility (IntersectionObserver) */
-let floatDebounce=null;
-const observer = new IntersectionObserver(entries=>{
+const observer = new IntersectionObserver(entries => {
   const e = entries[0];
-  clearTimeout(floatDebounce);
-  floatDebounce = setTimeout(()=>{
-    if(!e.isIntersecting){
-      floatingVideo.classList.add('visible');
-      if(floatingVideo && floatingVideo.srcObject) floatingVideo.play().catch(()=>{/*ignore*/});
-    }else{
-      floatingVideo.classList.remove('visible');
-    }
-  },120);
+  setTimeout(()=> {
+    if(!e.isIntersecting){ el.floating.classList.add('visible'); el.floating.play().catch(()=>{}); }
+    else el.floating.classList.remove('visible');
+  }, 120);
 },{threshold:0.05});
-observer.observe(video);
+observer.observe(el.video);
 
-/* クリーンアップ */
-window.addEventListener('beforeunload', ()=>{ clearTimeout(captureTimer); if(stream) stream.getTracks().forEach(t=>t.stop()); });
+window.addEventListener('beforeunload', ()=>{
+  clearTimeout(STATE.captureTimer);
+  if(STATE.stream) STATE.stream.getTracks().forEach(t=>t.stop());
+});
 
+/* --- init --- */
+(function init(){
+  setRangeUI();
+  addRange({minR:60,maxR:150,minG:200,maxG:255,minB:220,maxB:255});
+  addRange({minR:120,maxR:220,minG:25,maxG:115,minB:25,maxB:60});
+  addRange({minR:37,maxR:75,minG:75,maxG:150,minB:100,maxB:200});
+  el.addRange.onclick = ()=> addRange();
+  el.addRangeTop.onclick = ()=> addRange();
+  window.addEventListener('error', e => log(e.message, 'log-error'));
+})();
 </script>
 </body>
 </html>
