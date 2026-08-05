@@ -6,6 +6,7 @@
 <title>GOUP通知BOT</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+/* （省略: 元のスタイルと同じ） */
 :root{--bg:#f4f6f9;--card:#fff;--muted:#667085;--accent:#0066ff;--accent-2:#0b5cff;--danger:#ef4444;--radius:10px;--shadow:0 8px 30px rgba(16,24,40,0.08);--soft-shadow:0 4px 18px rgba(16,24,40,0.06)}
 *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:"Inter",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;background:linear-gradient(180deg,#f9fbff,#f4f6f9);color:#0f1724}
 .header{max-width:1080px;margin:0 auto 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -121,6 +122,7 @@ video#camera{width:100%;height:auto;max-height:200px;object-fit:contain;backgrou
       <div style="font-weight:700;margin-bottom:8px">送信 / 状態</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;gap:8px">
+          <!-- value を初期表示（空）にして、script で反映する -->
           <input id="webhookInput" placeholder="Webhook URL をここに入力" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(15,23,36,.06)">
           <button id="testWebhook" class="btn btn-ghost">テスト送信</button>
         </div>
@@ -141,7 +143,13 @@ video#camera{width:100%;height:auto;max-height:200px;object-fit:contain;backgrou
 <script>
 /* --- STATE / helpers --- */
 const STATE = {
-  WEBHOOK: "https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK",
+  // ブラウザ側に webhook をハードコードするのは危険なのでデフォルトは空にしています。
+  // ブラウザから直接 Discord webhook に送信できない場合は proxy を利用してください（下に例を記載）。
+  WEBHOOK: 'https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK',
+  // もし自前のプロキシをたてるなら PROXY_URL に設定し、SEND_VIA_PROXY を true にしてください。
+  SEND_VIA_PROXY: false,
+  PROXY_URL: '',
+
   DETECTION_RATE: 0.001,
   SAMPLE_STEP: 1,
   CAPTURE_DELAY: 250,
@@ -180,21 +188,34 @@ function setRangeUI() {
   el.captureDelayInput.addEventListener('input', e => { STATE.CAPTURE_DELAY = +e.target.value; el.captureDelayValue.textContent = `${STATE.CAPTURE_DELAY} ms`; });
   el.sampleStepInput.addEventListener('input', e => { STATE.SAMPLE_STEP = +e.target.value; el.sampleStepValue.textContent = STATE.SAMPLE_STEP; });
   el.detectionRateInput.addEventListener('input', e => { const p = +e.target.value; STATE.DETECTION_RATE = p / 100; el.detectionRateValue.textContent = `${p.toFixed(3)}%`; });
-  el.webhookInput.addEventListener('input', e => STATE.WEBHOOK = e.target.value.trim());
+
+  // webhook 入力を STATE に反映
+  el.webhookInput.addEventListener('input', e => {
+    STATE.WEBHOOK = e.target.value.trim();
+  });
+
   $('clearDebugBtn').onclick = () => { $('debugLog').innerHTML=''; log('DEBUGログをクリアしました','log-info'); };
   $('copyDebug').onclick = async () => { try { await navigator.clipboard.writeText($('debugLog').innerText); log('DEBUGログをコピーしました','log-success'); } catch (e) { log('ログコピーに失敗しました','log-error'); } };
   $('toggleDebug').onclick = ()=> $('debugLog').parentElement.parentElement.classList.toggle('collapsed');
+
   el.testWebhook.onclick = async ()=> {
-    if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log("Webhook が設定されていません",'log-error'); alert("Webhook を入力してください"); return; }
+    if(!STATE.WEBHOOK){ log("Webhook が設定されていません",'log-error'); alert("Webhook を入力してください"); return; }
     try {
-      const form = new FormData(); form.append('payload_json', JSON.stringify({content:'[テスト] GOUP通知BOT テストメッセージ'}));
-      const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
-      alert(res.ok ? 'テスト送信成功' : 'テスト送信失敗: '+res.status);
-    } catch(e) { alert('送信エラー: '+e.message); }
+      // テスト送信は proxy 経由か直接送るかを選べるように
+      if(STATE.SEND_VIA_PROXY && STATE.PROXY_URL){
+        const res = await fetch(STATE.PROXY_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({content:'[テスト] GOUP通知BOT テストメッセージ', webhook: STATE.WEBHOOK})});
+        alert(res.ok ? 'テスト送信（proxy）成功' : 'テスト送信（proxy）失敗: '+res.status);
+      } else {
+        const form = new FormData(); form.append('payload_json', JSON.stringify({content:'[テスト] GOUP通知BOT テストメッセージ'}));
+        const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
+        alert(res.ok ? 'テスト送信成功' : 'テスト送信失敗: '+res.status + '（CORSの可能性あり）');
+      }
+    } catch(e) { alert('送信エラー: '+e.message + '\nブラウザから直接送信できない場合はサーバ側で転送する proxy を使用してください。'); log('テスト送信エラー: '+e.message,'log-error'); }
   };
 }
 
 /* --- RGB range UI (editable label) --- */
+/* （rangeHTML / addRange 等は元コードと同じ） */
 function rangeHTML(id, v={minR:100,maxR:185,minG:5,maxG:75,minB:0,maxB:45}, label){
   const labelPart = label ? ` — ${label}` : '';
   const labelVal = label ? label : '';
@@ -332,32 +353,68 @@ function detectColor(){
 }
 
 /* --- 撮影・送信 --- */
+// ここで canvas.toBlob を使い Blob を作成して sendToDiscord に渡す
 async function takePhoto(rangeNumber, label){
   log('写真撮影開始','log-info');
   canvas.width = el.video.videoWidth; canvas.height = el.video.videoHeight; ctx.drawImage(el.video,0,0,canvas.width,canvas.height);
   try {
-    const dataUrl = canvas.toDataURL('image/jpeg',0.9); el.photo.src = dataUrl; el.status.textContent = 'Discordへ送信中…'; log('写真作成成功','log-success');
-    const usedLabel = label || (el.rangesBox.children[rangeNumber-1]?.dataset.label) || (el.rangesBox.children[rangeNumber-1]?.querySelector('.labelInput')?.value.trim()) || 'Unnamed';
-    if(STATE.SEND_ENABLED) await sendToDiscord(dataUrl, rangeNumber, usedLabel);
-    else { log('Discord送信は無効化されています。送信をスキップしました。','log-info'); el.status.textContent = '送信スキップ（OFF）'; }
+    // toBlob を使って直接 Blob を得る（dataURL を fetch するより確実）
+    canvas.toBlob(async (blob) => {
+      if(!blob){ log('toBlob で Blob を作成できませんでした','log-error'); return; }
+      // プレビュー用には object URL を使う
+      const objectUrl = URL.createObjectURL(blob);
+      el.photo.src = objectUrl;
+      el.status.textContent = 'Discordへ送信中…'; log('写真作成成功','log-success');
+      const usedLabel = label || (el.rangesBox.children[rangeNumber-1]?.dataset.label) || (el.rangesBox.children[rangeNumber-1]?.querySelector('.labelInput')?.value.trim()) || 'Unnamed';
+      if(STATE.SEND_ENABLED){
+        await sendToDiscord(blob, rangeNumber, usedLabel);
+      } else {
+        log('Discord送信は無効化されています。送信をスキップしました。','log-info'); el.status.textContent = '送信スキップ（OFF）';
+      }
+      // しばらくしてからオブジェクトURLを解放
+      setTimeout(()=> URL.revokeObjectURL(objectUrl), 30000);
+    }, 'image/jpeg', 0.9);
   } catch(e){ log('画像作成失敗: '+e.message,'log-error'); }
 }
-async function sendToDiscord(dataUrl, rangeNumber, label){
-  if(!STATE.WEBHOOK || STATE.WEBHOOK==="https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK"){ log('Webhook URLが設定されていません','log-error'); el.status.textContent='Webhook URL未設定'; return; }
+
+// sendToDiscord を Blob を受け取るように書き換え
+async function sendToDiscord(blob, rangeNumber, label){
+  if(!STATE.WEBHOOK){ log('Webhook URLが設定されていません','log-error'); el.status.textContent='Webhook URL未設定'; return; }
+
   try {
     log('Discord送信開始','log-info');
-    const blob = await (await fetch(dataUrl)).blob();
-    const form = new FormData(); form.append('file', blob, 'detected.jpg');
+    const form = new FormData();
+    form.append('file', blob, 'detected.jpg');
     const now = new Date();
     const time = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}:${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
     const safeLabel = label || 'Unnamed';
     const contentText = `[${time}] 範囲${rangeNumber}-${safeLabel}がSpawnしました`;
     form.append('payload_json', JSON.stringify({content: contentText}));
-    const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
-    log(`HTTPステータス: ${res.status}`);
-    if(res.ok){ log(`送信成功: ${contentText}`,'log-success'); el.status.textContent='送信完了！'; }
-    else { log('Discord送信失敗: '+await res.text(),'log-error'); el.status.textContent='Discord送信失敗'; }
-  } catch(e){ log(`Discord送信エラー: ${e.name} / ${e.message}`,'log-error'); el.status.textContent='Discord送信エラー'; }
+
+    if(STATE.SEND_VIA_PROXY && STATE.PROXY_URL){
+      // proxy に webhook の URL と form data を送る実装例（必要に応じて proxy 側を作成）
+      const proxyForm = new FormData();
+      proxyForm.append('webhook', STATE.WEBHOOK);
+      proxyForm.append('payload_json', JSON.stringify({content: contentText}));
+      proxyForm.append('file', blob, 'detected.jpg');
+      const res = await fetch(STATE.PROXY_URL, {method:'POST', body: proxyForm});
+      log(`proxy HTTPステータス: ${res.status}`);
+      if(res.ok){ log(`proxy 経由送信成功: ${contentText}`,'log-success'); el.status.textContent='送信完了！（proxy）'; }
+      else { const txt = await res.text(); log('proxy 経由送信失敗: '+txt,'log-error'); el.status.textContent='proxy 送信失敗'; }
+    } else {
+      // 直接 Webhook に送る（ブラウザ -> Discord webhook は CORS でブロックされる可能性があります）
+      const res = await fetch(STATE.WEBHOOK, {method:'POST', body: form});
+      log(`HTTPステータス: ${res.status}`);
+      if(res.ok){ log(`送信成功: ${contentText}`,'log-success'); el.status.textContent='送信完了！'; }
+      else { const txt = await res.text(); log('Discord送信失敗: '+txt,'log-error'); el.status.textContent='Discord送信失敗'; }
+    }
+  } catch(e){
+    // よくある原因: CORS によるブラウザブロック -> ネットワークエラーになる
+    log(`Discord送信エラー: ${e.name} / ${e.message}`,'log-error');
+    el.status.textContent='Discord送信エラー';
+    // ユーザー向けヒント
+    log('注意: ブラウザが Discord の Webhook をブロック（CORS）している可能性があります。サーバ経由で転送する proxy の導入を検討してください。','log-info');
+  }
 }
 
 /* --- 送信トグル / Floating preview / 終了処理 --- */
@@ -382,6 +439,9 @@ window.addEventListener('beforeunload', ()=>{
 /* --- init (初期範囲にラベルを設定) --- */
 (function init(){
   setRangeUI();
+  // webhook input を STATE の現在値で初期化（空文字がデフォルト）
+  el.webhookInput.value = STATE.WEBHOOK || '';
+
   addRange({minR:60,maxR:150,minG:200,maxG:255,minB:220,maxB:255}, 'Divine');
   addRange({minR:120,maxR:220,minG:25,maxG:115,minB:25,maxB:60}, 'Ascended');
   addRange({minR:37,maxR:75,minG:75,maxG:150,minB:100,maxB:200}, 'Forbidden');
