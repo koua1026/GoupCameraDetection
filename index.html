@@ -220,6 +220,7 @@ let WEBHOOK = "ここにWebhook URL"; // default (右側入力で上書きでき
 const DETECTION_RATE = 0.0005;
 let SAMPLE_STEP = 1;
 const CAPTURE_INTERVAL = 1000;
+  const CAPTURE_DELAY = 250; // RGB検出から撮影までの遅延（ms）
 
 /* 要素 */
 const $ = id=>document.getElementById(id);
@@ -310,15 +311,15 @@ addRangeBtn.onclick = ()=>{ addRange(); debug("RGB範囲を追加しました","
 addRangeTop.onclick = ()=>{ addRange(); debug("RGB範囲を追加しました","log-success"); };
 
 /* 初期範囲 */
-addRange({minR:40,maxR:80,minG:122,maxG:245,minB:117,maxB:235});
-addRange({minR:100,maxR:185,minG:5,maxG:75,minB:0,maxB:45});
+addRange({minR:60,maxR:150,minG:200,maxG:255,minB:220,maxB:255});
+addRange({minR:120,maxR:220,minG:25,maxG:115,minB:25,maxB:60});
 addRange({minR:37,maxR:75,minG:75,maxG:150,minB:100,maxB:200});
 
 /* 色認識関係（元の近接 RGB 実装をキープ） */
 function getNearestRange(r,g,b,rs){ const c=[]; rs.forEach((v,i)=>{ if(r>=v.minR&&r<=v.maxR&&g>=v.minG&&g<=v.maxG&&b>=v.minB&&b<=v.maxB){ const cr=(v.minR+v.maxR)/2, cg=(v.minG+v.maxG)/2, cb=(v.minB+v.maxB)/2; c.push({i,dist:Math.hypot(r-cr,g-cg,b-cb)}); } }); if(!c.length) return -1; c.sort((a,b)=>a.dist-b.dist); return c[0].i; }
 
 /* カメラ + 検出（元コードの挙動を維持） */
-let stream=null, detecting=false, detected=false, lastCapture=0;
+let stream=null, detecting=false, detected=false, lastCapture=0, captureTimer=null;
 
 startBtn.onclick = async ()=>{
   debug("カメラ起動処理を開始");
@@ -365,7 +366,16 @@ function detectColor(){
       const rangeNumber=bestRange+1;
       debug(`RGB範囲${rangeNumber}を検知`,"log-success");
       const now=Date.now();
-      if(now-lastCapture>=CAPTURE_INTERVAL){ lastCapture=now; takePhoto(rangeNumber); } else debug(`クールダウン中 (${CAPTURE_INTERVAL-(now-lastCapture)}ms)`,"log-info");
+      if(now-lastCapture>=CAPTURE_INTERVAL){
+        lastCapture=now;
+        debug(`RGB検出から${CAPTURE_DELAY}ms後に撮影します`,"log-info");
+        clearTimeout(captureTimer);
+        captureTimer=setTimeout(()=>{
+          if(detecting){
+            takePhoto(rangeNumber);
+          }
+        },CAPTURE_DELAY);
+      } else debug(`クールダウン中 (${CAPTURE_INTERVAL-(now-lastCapture)}ms)`,"log-info");
     }
   } else {
     detected=false;
@@ -423,7 +433,7 @@ const observer = new IntersectionObserver(entries=>{
 observer.observe(video);
 
 /* クリーンアップ */
-window.addEventListener('beforeunload', ()=>{ if(stream) stream.getTracks().forEach(t=>t.stop()); });
+window.addEventListener('beforeunload', ()=>{ clearTimeout(captureTimer); if(stream) stream.getTracks().forEach(t=>t.stop()); });
 
 </script>
 </body>
