@@ -6,41 +6,41 @@
 <title>GOUP通知BOT</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--muted:#667085;--accent:#0066ff;--accent-2:#0b5cff;--danger:#ef4444;--radius:14px;--shadow:0 8px 30px rgba(16,24,40,0.08);--soft-shadow:0 4px 18px rgba(16,24,40,0.06)}
-*{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:"Inter",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;background:linear-gradient(180deg,var(--bg),#eef2f6);color:#0f1724;padding:28px;-webkit-font-smoothing:antialiased}
-.header{max-width:1080px;margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow)}
-.title{font-size:18px;font-weight:600}
-.subtitle{font-size:12px;color:var(--muted)}
-.layout{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:22px}
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--soft-shadow);padding:18px}
-.camera-card{display:flex;flex-direction:column;gap:12px;min-height:320px}
-.camera-area{position:relative;border-radius:10px;overflow:hidden;background:#e6eaf0;border:1px solid rgba(15,23,36,.04)}
-video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display:block}
-.photo-preview{width:160px;border-radius:8px;border:1px solid rgba(15,23,36,.04);box-shadow:0 6px 18px rgba(2,6,23,.06)}
-.panel{background:linear-gradient(180deg,var(--card),#fbfdff);padding:14px;border-radius:12px;border:1px solid rgba(15,23,36,.04);box-shadow:var(--soft-shadow)}
-.status{font-weight:600;font-size:15px;text-align:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(15,23,36,.03)}
-#ranges{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow:auto;padding-right:6px}
-.range-box{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,.03)}
-.system-setting{display:flex;flex-direction:column;gap:6px;padding:11px;margin-bottom:10px;border-radius:10px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,.04)}
+:root{--bg:#f4f6f9;--card:#fff;--muted:#667085;--accent:#0066ff;--accent-2:#0b5cff;--danger:#ef4444;--radius:10px;--shadow:0 8px 30px rgba(16,24,40,0.08);--soft-shadow:0 4px 18px rgba(16,24,40,0.06)}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:"Inter",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Meiryo",sans-serif;background:linear-gradient(180deg,#f9fbff,#f4f6f9);color:#0f1724}
+.header{max-width:1080px;margin:0 auto 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow);font-size:18px}
+.title{font-size:16px;font-weight:600}
+.subtitle{font-size:11px;color:var(--muted)}
+.layout{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:12px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--soft-shadow);padding:12px}
+.camera-card{display:flex;flex-direction:column;gap:8px;min-height:180px}
+.camera-area{position:relative;border-radius:8px;overflow:hidden;background:#e6eaf0;border:1px solid rgba(15,23,36,.04);display:flex;align-items:center;justify-content:center;padding:6px}
+video#camera{width:100%;height:auto;max-height:200px;object-fit:contain;background:#dfe6ee;display:block;border-radius:6px}
+.photo-preview{width:120px;border-radius:6px;border:1px solid rgba(15,23,36,.04);box-shadow:0 6px 14px rgba(2,6,23,.05)}
+.panel{background:linear-gradient(180deg,var(--card),#fbfdff);padding:10px;border-radius:10px;border:1px solid rgba(15,23,36,.04);box-shadow:var(--soft-shadow)}
+.status{font-weight:600;font-size:14px;text-align:center;padding:8px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(15,23,36,.03)}
+#ranges{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto;padding-right:6px}
+.range-box{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,.03)}
+.system-setting{display:flex;flex-direction:column;gap:6px;padding:8px;margin-bottom:8px;border-radius:8px;background:linear-gradient(180deg,#fcfeff,#f6f8fb);border:1px solid rgba(15,23,36,.04)}
 .system-setting-title{font-weight:600;font-size:13px}
 .system-setting-value{font-size:12px;color:var(--accent);font-weight:600}
-.btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;border:none}
-.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 20px rgba(11,92,255,.12)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:8px 10px;font-weight:600;cursor:pointer;border:none;font-size:13px}
+.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 18px rgba(11,92,255,.12)}
 .btn-ghost{background:transparent;border:1px solid rgba(15,23,36,.06);color:var(--muted)}
-.debug-box{font-family:monospace;font-size:12px;height:140px;overflow:auto;border-radius:8px;background:linear-gradient(180deg,#0f172408,#0f172404);padding:10px;color:#0f1724}
+.debug-box{font-family:monospace;font-size:12px;height:100px;overflow:auto;border-radius:6px;background:linear-gradient(180deg,#0f172408,#0f172404);padding:8px;color:#0f1724}
 .hint{font-size:12px;color:var(--muted)}
-.floating-clone{position:fixed;top:18px;right:18px;width:170px;height:auto;z-index:9999;border-radius:10px;box-shadow:0 10px 30px rgba(2,6,23,.12);object-fit:cover;visibility:hidden;opacity:0;transition:opacity .12s ease}
+.floating-clone{position:fixed;top:14px;right:14px;width:140px;height:auto;z-index:9999;border-radius:8px;box-shadow:0 10px 30px rgba(2,6,23,.12);object-fit:contain;visibility:hidden;opacity:0;transition:opacity .18s,visibility .18s}
 .floating-clone.visible{visibility:visible;opacity:1}
-.range-label-input{width:160px;padding:6px;border-radius:6px;border:1px solid rgba(15,23,36,.06);font-size:13px}
-@media(max-width:980px){.layout{grid-template-columns:1fr;padding-bottom:30px}.floating-clone{right:10px;top:76px}video#camera{height:220px}}
+.range-label-input{width:140px;padding:6px;border-radius:6px;border:1px solid rgba(15,23,36,.06);font-size:13px}
+@media(max-width:980px){.layout{grid-template-columns:1fr;padding-bottom:18px}.floating-clone{right:10px;top:70px}video#camera{max-height:160px}}
 </style>
 </head>
 <body>
 <div class="header">
   <div class="brand"><div class="logo">G</div><div><div class="title">GOUP 通知 BOT</div><div class="subtitle">高感度 RGB 検出と Discord 通知</div></div></div>
-  <div style="display:flex;align-items:center;gap:10px">
+  <div style="display:flex;align-items:center;gap:8px">
     <button id="addRangeTop" class="btn btn-ghost">＋ 範囲追加</button>
     <button id="toggleDebug" class="btn btn-ghost">DEBUG</button>
   </div>
@@ -48,14 +48,14 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
 
 <div class="layout">
   <div class="card camera-card">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-      <div style="display:flex;flex-direction:column"><div style="font-weight:700">カメラプレビュー</div><div style="color:var(--muted);font-size:13px">スクロール時は右上に固定で表示されます</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="display:flex;flex-direction:column"><div style="font-weight:700;font-size:14px">カメラプレビュー</div><div style="color:var(--muted);font-size:12px">スクロール時は右上に固定で表示されます</div></div>
       <div style="display:flex;gap:10px;align-items:center"><div id="status" class="status">開始ボタンを押してください</div></div>
     </div>
 
     <div class="camera-area"><video id="camera" autoplay playsinline muted></video></div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px">
       <div style="display:flex;flex-direction:column"><div style="font-size:13px;font-weight:600">検出率</div><div id="rate" class="hint">検出率：0%</div></div>
       <div style="display:flex;align-items:center;gap:8px">
         <button id="start" class="btn btn-primary">開始</button>
@@ -64,7 +64,7 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
       </div>
     </div>
 
-    <div style="display:flex;gap:12px;align-items:center;margin-top:6px">
+    <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
       <img id="photo" class="photo-preview" alt="撮影プレビュー">
       <div style="flex:1">
         <div style="font-size:13px;font-weight:600">アクションログ</div>
@@ -73,9 +73,9 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
     </div>
   </div>
 
-  <div style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;flex-direction:column;gap:10px">
     <div class="panel">
-      <div style="font-weight:700;margin-bottom:10px">検出システム設定</div>
+      <div style="font-weight:700;margin-bottom:8px;font-size:14px">検出システム設定</div>
 
       <div class="system-setting">
         <div style="display:flex;justify-content:space-between;align-items:center">
@@ -111,20 +111,17 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
         <div style="font-size:12px;color:var(--muted)">複数範囲は中心に近い方を優先</div>
       </div>
       <div id="ranges"></div>
-      <div style="margin-top:12px;display:flex;gap:8px">
+      <div style="margin-top:10px;display:flex;gap:8px">
         <button id="addRange" class="btn btn-primary">＋ RGB 範囲を追加</button>
         <button id="copyDebug" class="btn btn-ghost">ログをコピー</button>
       </div>
     </div>
 
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div style="font-weight:700">送信 / 状態</div>
-        <div style="font-size:13px;color:var(--muted)">Webhook</div>
-      </div>
+    <div class="panel" style="text-align:center">
+      <div style="font-weight:700;margin-bottom:8px">送信 / 状態</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;gap:8px">
-          <input id="webhookInput" placeholder="Webhook URL をここに入力" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(15,23,36,.06)">
+          <input id="webhookInput" placeholder="Webhook URL をここに入力" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(15,23,36,.06)">
           <button id="testWebhook" class="btn btn-ghost">テスト送信</button>
         </div>
         <div style="font-size:12px;color:var(--muted)">送信は撮影時に自動で行われます。画像は圧縮して送信されます。</div>
@@ -132,8 +129,8 @@ video#camera{width:100%;height:320px;object-fit:cover;background:#dfe6ee;display
     </div>
 
     <div class="panel" style="text-align:center">
-      <div style="font-weight:700;margin-bottom:8px">ヒント</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.5">・誤認が続く場合はRGB範囲を狭めてください。<br>・反応が鈍ければSAMPLE_STEPを下げてください。<br>・検出率を下げると少ない一致でも検知します。</div>
+      <div style="font-weight:700;margin-bottom:6px">ヒント</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.4">・誤認が続く場合はRGB範囲を狭めてください。<br>・反応が鈍ければSAMPLE_STEPを下げてください。</div>
     </div>
   </div>
 </div>
@@ -185,9 +182,9 @@ function setRangeUI() {
   el.detectionRateInput.addEventListener('input', e => { const p = +e.target.value; STATE.DETECTION_RATE = p / 100; el.detectionRateValue.textContent = `${p.toFixed(3)}%`; });
   el.webhookInput.addEventListener('input', e => STATE.WEBHOOK = e.target.value.trim());
   $('clearDebugBtn').onclick = () => { $('debugLog').innerHTML=''; log('DEBUGログをクリアしました','log-info'); };
-  $('copyDebug').onclick = async () => { try { await navigator.clipboard.writeText($('debugLog').innerText); log('DEBUGログをコピーしました','log-success'); } catch (e) { log('ログコピー失敗: '+e.message,'log-error'); } };
+  $('copyDebug').onclick = async () => { try { await navigator.clipboard.writeText($('debugLog').innerText); log('DEBUGログをコピーしました','log-success'); } catch (e) { log('ログコピーに失敗しました','log-error'); } };
   $('toggleDebug').onclick = ()=> $('debugLog').parentElement.parentElement.classList.toggle('collapsed');
-  el.testWebhook.onclick = async ()=>{
+  el.testWebhook.onclick = async ()=> {
     if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log("Webhook が設定されていません",'log-error'); alert("Webhook を入力してください"); return; }
     try {
       const form = new FormData(); form.append('payload_json', JSON.stringify({content:'[テスト] GOUP通知BOT テストメッセージ'}));
@@ -346,7 +343,7 @@ async function takePhoto(rangeNumber, label){
   } catch(e){ log('画像作成失敗: '+e.message,'log-error'); }
 }
 async function sendToDiscord(dataUrl, rangeNumber, label){
-  if(!STATE.WEBHOOK || STATE.WEBHOOK==="ここにWebhook URL"){ log('Webhook URLが設定されていません','log-error'); el.status.textContent='Webhook URL未設定'; return; }
+  if(!STATE.WEBHOOK || STATE.WEBHOOK==="https://discord.com/api/webhooks/1534074045027586150/QJf68I5ggEk8MGaO3msg0p0p1-op83DKBSuyOiNXYsfBdymA1PGvh-TYJ6uaJhOF7FNK"){ log('Webhook URLが設定されていません','log-error'); el.status.textContent='Webhook URL未設定'; return; }
   try {
     log('Discord送信開始','log-info');
     const blob = await (await fetch(dataUrl)).blob();
@@ -365,7 +362,7 @@ async function sendToDiscord(dataUrl, rangeNumber, label){
 
 /* --- 送信トグル / Floating preview / 終了処理 --- */
 function updateSendButton(){ el.sendToggle.textContent = STATE.SEND_ENABLED ? '送信停止' : '送信開始'; el.sendToggle.classList.toggle('btn-primary', STATE.SEND_ENABLED); }
-el.sendToggle.onclick = ()=>{ STATE.SEND_ENABLED = !STATE.SEND_ENABLED; updateSendButton(); log(STATE.SEND_ENABLED ? 'Discord送信を有効にしました' : 'Discord送信を無効にしました','log-info'); el.status.textContent = STATE.SEND_ENABLED ? '送信有効' : '送信停止中'; };
+el.sendToggle.onclick = ()=>{ STATE.SEND_ENABLED = !STATE.SEND_ENABLED; updateSendButton(); log(STATE.SEND_ENABLED ? 'Discord送信を有効にしました' : 'Discord送信を無効にしました','log-info'); }
 updateSendButton();
 
 const observer = new IntersectionObserver(entries => {
